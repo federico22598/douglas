@@ -1,0 +1,6 @@
+rootProject.name = 'douglas'
+
+include 'douglas-inject'
+include 'douglas-core'
+include 'douglas-dagger'
+include 'douglas-guice'

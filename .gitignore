@@ -1,0 +1,12 @@
+*.class
+*.log
+*.jar
+*.zip
+*.tar.gz
+*.rar
+
+.idea/
+*.iml
+*ipr
+out/
+classes/

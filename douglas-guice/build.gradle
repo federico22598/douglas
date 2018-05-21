@@ -1,0 +1,17 @@
+group = 'com.github.foskel'
+version = '0.1.0-RELEASE'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    
+    compile project(':douglas-inject')
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.0'
+}
