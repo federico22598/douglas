@@ -5,14 +5,14 @@ Douglas brings you a flexible API to build modular and extensible software. We c
 ### Using the plugin system
 #### Creating a plugin
 The first thing you need for a plugin is a *main class* which extends `AbstractPlugin`.
-To make organization and recognition easier, each plugin must have it's own manifest. It contains all the information needed about it and it's represented by a file named `plugin.xml` located in `/META-INF/`. It should look like this:
+To make myorganization and recognition easier, each plugin must have it's own manifest. It contains all the information needed about it and it's represented by a file named `plugin.xml` located in `/META-INF/`. It should look like this:
 ```
 <plugin>
     <main>MyPluginMainClass</main>
-    <packageId>my.organization.myplugin.mainclasspackage</packageId>
+    <packageId>my.myorganization.myplugin.mainclasspackage</packageId>
 
     <descriptor>
-        <groupId>my.organization</groupId>
+        <groupId>my.myorganization</groupId>
         <artifactId>myplugin</artifactId>
         <version>0.1.0</version>
         <name>MyPluginName</name>
@@ -20,7 +20,7 @@ To make organization and recognition easier, each plugin must have it's own mani
     
     <dependencies>
         <dependency>
-            <groupId>my.organization</groupId>
+            <groupId>my.myorganization</groupId>
             <artifactId>myplugindependency</artifactId>
             <name>MyPluginDependencyName</name>
             <version>0.1.0</version>

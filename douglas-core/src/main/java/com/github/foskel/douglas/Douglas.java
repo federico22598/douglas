@@ -80,7 +80,7 @@ public final class Douglas {
                 .instantiationStrategy(instantiationStrategy)
                 .informationExtractor(newPluginDescriptorExtractor())
                 .resourceHandler(new AnnotationResourceHandler())
-                
+
                 .build();
     }
 

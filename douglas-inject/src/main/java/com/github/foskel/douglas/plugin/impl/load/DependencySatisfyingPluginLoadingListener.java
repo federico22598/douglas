@@ -10,7 +10,6 @@ import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.haptor.process.DependencySatisfyingProcessor;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

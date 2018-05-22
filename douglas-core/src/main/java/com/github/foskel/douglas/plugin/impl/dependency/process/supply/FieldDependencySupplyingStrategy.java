@@ -74,7 +74,7 @@ public final class FieldDependencySupplyingStrategy implements DependencySupplyi
     }
 
     private boolean shouldReplace(Field field,
-                                         Object source) {
+                                  Object source) {
         if (!field.isAnnotationPresent(Supply.class)) {
             return false;
         }

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public enum AnnotationAttributeManager implements AttributeManager {
     INSTANCE;
-    
+
     private final Map<Class<? extends Module>, Object> attributes = new HashMap<>();
 
     @Override

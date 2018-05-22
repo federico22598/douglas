@@ -8,7 +8,7 @@ public final class Exceptions {
     private static <T extends Throwable> void throwAsUnchecked(Throwable exception, Object dummy) throws T {
         throw (T) exception;
     }
-    
+
     public static void throwAsUnchecked(Throwable throwable) {
         throwAsUnchecked(throwable, null);
     }

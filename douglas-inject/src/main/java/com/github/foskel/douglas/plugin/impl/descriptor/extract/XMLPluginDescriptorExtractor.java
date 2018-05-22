@@ -5,7 +5,6 @@ import com.github.foskel.douglas.plugin.descriptor.extract.DataFileURLExtractor;
 import com.github.foskel.douglas.plugin.descriptor.extract.PluginDescriptorExtractor;
 import com.github.foskel.douglas.plugin.descriptor.extract.PluginDescriptorParser;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,8 +17,8 @@ public final class XMLPluginDescriptorExtractor implements PluginDescriptorExtra
     private final String dataFilePath;
 
     public XMLPluginDescriptorExtractor(DataFileURLExtractor<ClassLoader> dataFileURLExtractor,
-                                 PluginDescriptorParser descriptorParser,
-                                 String dataFilePath) {
+                                        PluginDescriptorParser descriptorParser,
+                                        String dataFilePath) {
         this.dataFileURLExtractor = dataFileURLExtractor;
         this.descriptorParser = descriptorParser;
         this.dataFilePath = dataFilePath;

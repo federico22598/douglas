@@ -34,7 +34,7 @@ import java.util.List;
 
 @Module
 public final class PluginsModule {
-    
+
     @Provides
     @Singleton
     static PluginManager providePluginManager(StandardPluginManager pluginManager) {

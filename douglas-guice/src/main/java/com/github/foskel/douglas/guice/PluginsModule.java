@@ -3,7 +3,6 @@ package com.github.foskel.douglas.guice;
 import com.github.foskel.douglas.Douglas;
 import com.github.foskel.douglas.instantiation.GuiceInstantiationStrategy;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
-import com.github.foskel.douglas.instantiation.ZeroArgumentInstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.descriptor.extract.PluginDescriptorExtractor;
@@ -27,7 +26,6 @@ import com.github.foskel.douglas.plugin.scan.validation.PluginSourceValidator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 import javax.inject.Singleton;
 import java.nio.file.Path;

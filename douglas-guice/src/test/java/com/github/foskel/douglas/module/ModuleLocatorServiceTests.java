@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public final class ModuleLocatorServiceTests {

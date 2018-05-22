@@ -7,7 +7,6 @@ import com.github.foskel.douglas.plugin.impl.dependency.scan.result.NullableDepe
 import com.github.foskel.haptor.scan.DependencyScanResult;
 import com.github.foskel.haptor.scan.DependencyScanningStrategy;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;

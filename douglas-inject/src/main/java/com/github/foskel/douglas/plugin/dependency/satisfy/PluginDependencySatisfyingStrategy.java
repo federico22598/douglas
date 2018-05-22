@@ -10,7 +10,10 @@ import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingStrategy;
 import com.github.foskel.haptor.validate.DependencyValidatorService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy {
     private final DependencyValidatorService validatorService;
