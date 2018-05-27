@@ -6,49 +6,45 @@ import com.github.foskel.douglas.plugin.dependency.registry.PluginDependencyRegi
 import com.github.foskel.douglas.plugin.dependency.satisfy.PluginDependencySatisfyingStrategy;
 import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
-import com.github.foskel.haptor.impl.registry.decorate.ImmutableDependencyRegistryDecorator;
-import com.github.foskel.haptor.impl.validate.NullCheckingDependencyValidatorService;
-import com.github.foskel.haptor.process.DependencySatisfyingProcessor;
+import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
+import com.github.foskel.haptor.registry.decorate.ImmutableDependencyRegistryDecorator;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingStrategy;
-import com.github.foskel.haptor.scan.DependencyScanningStrategy;
+import com.github.foskel.haptor.validate.NullCheckingDependencyValidator;
 
-import java.nio.file.Path;
 import java.util.*;
 
-public final class FilePluginDependencySystem implements PluginDependencySystem {
+public final class StandardPluginDependencySystem implements PluginDependencySystem {
     private static final String LATEST_VERSION = "<latest>";
 
-    private final PluginDependencyRegistry<Path> registry;
-    private final Set<DependencySatisfyingProcessor> satisfyingProcessors;
-    private final DependencyScanningStrategy<PluginDescriptor, Plugin> scanningStrategy;
-    private final DependencySatisfyingStrategy dependencySatisfyingStrategy;
+    private final PluginDependencyRegistry registry;
+    private final Set<DependencyProcessor> satisfyingProcessors;
+    private final DependencySatisfyingStrategy<PluginDescriptor, Plugin> dependencySatisfyingStrategy;
 
-    public FilePluginDependencySystem(DependencyScanningStrategy<PluginDescriptor, Plugin> scanningStrategy) {
-        this.scanningStrategy = scanningStrategy;
-        this.registry = new PluginDependencyRegistry<>();
+    public StandardPluginDependencySystem() {
+        this.registry = new PluginDependencyRegistry();
         this.satisfyingProcessors = new HashSet<>();
-        this.dependencySatisfyingStrategy = new PluginDependencySatisfyingStrategy(NullCheckingDependencyValidatorService.INSTANCE);
+        this.dependencySatisfyingStrategy = new PluginDependencySatisfyingStrategy(NullCheckingDependencyValidator.INSTANCE);
     }
 
     @Override
-    public boolean registerDependencies(Path source) {
-        return this.registry.register(source, this.scanningStrategy);
+    public boolean register(PluginDescriptor source) {
+        return this.registry.registerDirectly(source, null);
     }
 
     @Override
-    public boolean unregisterDependencies(Path source) {
-        return this.registry.unregister(source);
+    public boolean unregister(PluginDescriptor source) {
+        return this.registry.unregisterDirectly(source);
     }
 
     @Override
-    public boolean registerProcessor(DependencySatisfyingProcessor processor) {
+    public boolean registerProcessor(DependencyProcessor processor) {
         return this.satisfyingProcessors.add(processor);
     }
 
     @Override
-    public boolean unregisterProcessor(DependencySatisfyingProcessor processor) {
+    public boolean unregisterProcessor(DependencyProcessor processor) {
         return this.satisfyingProcessors.remove(processor);
     }
 
@@ -69,7 +65,8 @@ public final class FilePluginDependencySystem implements PluginDependencySystem 
 
             if (matches(descriptor, groupId, artifactId, name)) {
                 if (version == null || version.equals(LATEST_VERSION)) {
-                    //use the plugin with the latest version
+                    // use the latest plugin
+
                     if (previousDescriptor != null && previousDescriptor.compareTo(descriptor) < 0) {
                         result = entry.getValue();
                     }
@@ -94,21 +91,10 @@ public final class FilePluginDependencySystem implements PluginDependencySystem 
     }
 
     @Override
-    public Map<PluginDescriptor, Plugin> findAllDependencies() {
-        return Collections.unmodifiableMap(this.registry.findAllDependencies());
-    }
-
-    @Override
-    public void clearDependencies() {
-        this.registry.clearDependencies();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<DependencySatisfyingResult> satisfy(Map<PluginDescriptor, Plugin> unsatisfiedDependencies) {
+    public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(Map<PluginDescriptor, Plugin> unsatisfiedDependencies) {
         return this.dependencySatisfyingStrategy.satisfy(this.registry,
                 this.satisfyingProcessors,
-                (Map<Object, Object>) (Map<?, ?>) unsatisfiedDependencies);
+                unsatisfiedDependencies);
     }
 
     @Override
@@ -119,6 +105,7 @@ public final class FilePluginDependencySystem implements PluginDependencySystem 
         //https://stackoverflow.com/questions/174093/toarraynew-myclass0-or-toarraynew-myclassmylist-size
         @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
         PluginDescriptor[] unsatisfiedDependenciesArray = unsatisfiedDependencies.toArray(new PluginDescriptor[unsatisfiedDependencies.size()]);
+
         Arrays.stream(unsatisfiedDependenciesArray, 0, unsatisfiedDependenciesArray.length).forEach(identifier -> {
             Optional<Plugin> candidateDependency = dependencyLocator.find(identifier);
 
@@ -129,7 +116,7 @@ public final class FilePluginDependencySystem implements PluginDependencySystem 
     }
 
     @Override
-    public DependencyRegistry<Path, PluginDescriptor, Plugin> getDependencyRegistry() {
+    public DependencyRegistry<PluginDescriptor, Plugin> getRegistry() {
         return new ImmutableDependencyRegistryDecorator<>(this.registry);
     }
 }

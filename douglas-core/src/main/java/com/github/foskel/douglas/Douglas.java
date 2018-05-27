@@ -97,12 +97,6 @@ public final class Douglas {
         return new PluginDescriptorExtractorBuilder();
     }
 
-    public static DependencyScanningStrategy<PluginDescriptor, Plugin> newDependencyScanningStrategy() {
-        return new FileDependencyScanningStrategy(
-                new StandardDependencyDescriptorExtractor(
-                        newPluginDescriptorExtractor()));
-    }
-
     public static ModuleManager newModuleManager() {
         return newModuleManager(Collections.emptyMap());
     }

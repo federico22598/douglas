@@ -1,5 +1,7 @@
 package com.github.foskel.douglas.plugin.impl.dependency.process.supply;
 
+import com.github.foskel.douglas.plugin.impl.dependency.StandardPluginDependencySystem;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,7 +14,7 @@ public @interface Supply {
 
     String artifactId();
 
-    String version() default "";
+    String version() default "<latest>";
 
     String name();
 }

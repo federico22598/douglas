@@ -10,12 +10,10 @@ import java.util.Objects;
 
 public final class SimplePluginDescriptor extends BaseArtifactDescriptor implements PluginDescriptor {
     private final String mainClassName;
-    private final String mainClassPackageId;
     private final Collection<String> resourceTargets;
     private final Collection<PluginDescriptor> dependencyDescriptors;
 
     SimplePluginDescriptor(String mainClassName,
-                           String mainClassPackageId,
                            String groupId,
                            String artifactId,
                            Version version,
@@ -28,7 +26,6 @@ public final class SimplePluginDescriptor extends BaseArtifactDescriptor impleme
                 name);
 
         this.mainClassName = mainClassName;
-        this.mainClassPackageId = mainClassPackageId;
         this.resourceTargets = resourceTargets;
         this.dependencyDescriptors = dependencyDescriptors;
     }
@@ -38,13 +35,8 @@ public final class SimplePluginDescriptor extends BaseArtifactDescriptor impleme
     }
 
     @Override
-    public String getMainClassName() {
+    public String getMainClass() {
         return this.mainClassName;
-    }
-
-    @Override
-    public String getPackageId() {
-        return this.mainClassPackageId;
     }
 
     @Override
@@ -69,12 +61,11 @@ public final class SimplePluginDescriptor extends BaseArtifactDescriptor impleme
 
         PluginDescriptor other = (PluginDescriptor) object;
 
-        return Objects.equals(other.getGroupId(), this.groupId)
-                && Objects.equals(other.getArtifactId(), this.artifactId)
-                && Objects.equals(other.getVersion(), this.version)
-                && Objects.equals(other.getName(), this.name)
-                && Objects.equals(other.getMainClassName(), this.mainClassName)
-                && Objects.equals(other.getPackageId(), this.mainClassPackageId);
+        return other.getGroupId().equals(this.groupId)
+                && other.getArtifactId().equals(this.artifactId)
+                && other.getVersion().equals(this.version)
+                && other.getName().equals(this.name)
+                && other.getMainClass().equals(this.mainClassName);
     }
 
     @Override
@@ -95,9 +86,6 @@ public final class SimplePluginDescriptor extends BaseArtifactDescriptor impleme
                 (this.mainClassName == null
                         ? "<null>"
                         : identityToString(this.mainClassName) + "[" + this.mainClassName + "]") + "," +
-                (this.mainClassPackageId == null
-                        ? "<null>"
-                        : identityToString(this.mainClassPackageId) + "[" + this.mainClassPackageId + "]") +
                 "}";
     }
 
@@ -110,7 +98,6 @@ public final class SimplePluginDescriptor extends BaseArtifactDescriptor impleme
         hash = 31 * hash + this.version.hashCode();
         hash = 31 * hash + this.name.hashCode();
         hash = 31 * hash + this.mainClassName.hashCode();
-        hash = 31 * hash + this.mainClassPackageId.hashCode();
 
         return hash;
     }

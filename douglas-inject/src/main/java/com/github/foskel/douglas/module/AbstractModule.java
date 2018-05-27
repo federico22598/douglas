@@ -1,10 +1,7 @@
 package com.github.foskel.douglas.module;
 
-import com.github.foskel.camden.property.PropertyManager;
-import com.github.foskel.camden.property.StandardPropertyManager;
 import com.github.foskel.douglas.module.attribute.AnnotationAttributeManager;
 import com.github.foskel.douglas.module.attribute.AttributeManager;
-import com.github.foskel.haptor.impl.ClassDependencySystem;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -18,8 +15,6 @@ import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractModule implements Module {
-    protected final ClassDependencySystem<Module> dependencySystem = new ClassDependencySystem<>();
-    protected final PropertyManager propertyManager = new StandardPropertyManager();
     private Path dataFile;
 
     private static String identityToString(Object o) {
@@ -28,8 +23,6 @@ public abstract class AbstractModule implements Module {
 
     @Override
     public void load() {
-        this.dependencySystem.registerDependencies(this);
-        this.propertyManager.register(this);
         this.registerAttributes();
     }
 
@@ -39,8 +32,6 @@ public abstract class AbstractModule implements Module {
 
     @Override
     public void unload() {
-        this.dependencySystem.unregisterDependencies(this);
-        this.propertyManager.unregister(this);
         this.unregisterAttributes();
     }
 
@@ -61,24 +52,11 @@ public abstract class AbstractModule implements Module {
     }
 
     @Override
-    public PropertyManager getPropertyManager() {
-        return this.propertyManager;
-    }
-
-    @Override
-    public ClassDependencySystem<Module> getDependencySystem() {
-        return this.dependencySystem;
-    }
-
-    @Override
     public String toString() {
         return identityToString(this) + "{" +
                 (this.getName() == null
                         ? "<null>"
-                        : identityToString(this.getName()) + "[" + this.getName() + "]") + "," +
-                (this.propertyManager.findAllProperties() == null
-                        ? "<null>"
-                        : identityToString(this.propertyManager.findAllProperties()) + "[" + this.propertyManager.findAllProperties() + "]")
+                        : identityToString(this.getName()) + "[" + this.getName() + "]") + ","
                 + "}";
     }
 

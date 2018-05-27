@@ -5,7 +5,8 @@ plugins {
 }
 
 apply plugin: "net.ltgt.apt"
-apply plugin: 'java'
+
+version '0.1.0-RELEASE'
 
 repositories {
     mavenCentral()

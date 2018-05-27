@@ -8,16 +8,16 @@ import com.github.foskel.douglas.plugin.impl.dependency.process.supply.Supplying
 import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
-import com.github.foskel.haptor.process.DependencySatisfyingProcessor;
+import com.github.foskel.haptor.process.DependencyProcessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public final class DependencySatisfyingPluginLoadingListener implements PluginLoadingListener {
-    private final List<DependencySatisfyingProcessor> satisfyingProcessors;
+    private final List<DependencyProcessor> satisfyingProcessors;
 
-    public DependencySatisfyingPluginLoadingListener(Collection<DependencySatisfyingProcessor> satisfyingProcessors) {
+    public DependencySatisfyingPluginLoadingListener(Collection<DependencyProcessor> satisfyingProcessors) {
         this.satisfyingProcessors = new ArrayList<>(satisfyingProcessors);
     }
 
@@ -32,7 +32,7 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
         PluginDependencySystem dependencySystem = plugin.getDependencySystem();
         PluginLocatorService locatorService = registry.getLocator();
 
-        this.registerDefaultDependencyProcessors(descriptor,
+        this.addDefaultProcessors(descriptor,
                 plugin,
                 registry);
 
@@ -43,17 +43,10 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
         dependencySystem.satisfy(locatorService);
     }
 
-    private void registerDefaultDependencyProcessors(PluginDescriptor descriptor,
-                                                     Plugin plugin,
-                                                     PluginRegistry registry) {
-        DependencySatisfyingProcessor removeProcessor = new PluginRemovingDependencySatisfyingProcessor(
-                registry, descriptor);
-
-        PluginLocatorService locatorService = registry.getLocator();
-        DependencySatisfyingProcessor supplyProcessor = SupplyingDependencySatisfyingProcessor.of(
-                locatorService, plugin);
-
-        this.satisfyingProcessors.add(removeProcessor);
-        this.satisfyingProcessors.add(supplyProcessor);
+    private void addDefaultProcessors(PluginDescriptor descriptor,
+                                      Plugin plugin,
+                                      PluginRegistry registry) {
+        this.satisfyingProcessors.add(new PluginRemovingDependencySatisfyingProcessor(registry, descriptor));
+        this.satisfyingProcessors.add(SupplyingDependencySatisfyingProcessor.of(registry.getLocator(), plugin));
     }
 }

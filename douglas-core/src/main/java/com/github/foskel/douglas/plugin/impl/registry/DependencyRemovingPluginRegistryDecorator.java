@@ -1,7 +1,6 @@
 package com.github.foskel.douglas.plugin.impl.registry;
 
 import com.github.foskel.douglas.plugin.Plugin;
-import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
 import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
@@ -46,8 +45,7 @@ public final class DependencyRemovingPluginRegistryDecorator implements PluginRe
 
         Plugin plugin = pluginResult.get();
 
-        return plugin.getDependencySystem()
-                .findAllDependencies()
+        return plugin.getDependencySystem().getRegistry().findAllDependencies()
                 .keySet()
                 .stream()
                 .allMatch(this::unregister);
@@ -80,11 +78,11 @@ public final class DependencyRemovingPluginRegistryDecorator implements PluginRe
     }
 
     private void unregisterAllDependencies() {
-        this.findAllPlugins().values()
-                .stream()
-                .map(Plugin::getDependencySystem)
-                .map(PluginDependencySystem::findAllDependencies)
-                .map(Map::keySet)
+        this.findAllPlugins().values().stream()
+                .map(plugin -> plugin.getDependencySystem()
+                        .getRegistry()
+                        .findAllDependencies()
+                        .keySet())
                 .forEach(this::unregisterAll);
     }
 }

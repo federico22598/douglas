@@ -1,10 +1,10 @@
 package com.github.foskel.douglas.module;
 
-import com.github.foskel.camden.property.PropertyManager;
-import com.github.foskel.camden.property.StandardPropertyManager;
 import com.github.foskel.douglas.module.attribute.AnnotationAttributeManager;
 import com.github.foskel.douglas.module.attribute.AttributeManager;
-import com.github.foskel.haptor.impl.ClassDependencySystem;
+import com.github.foskel.haptor.DependencySystem;
+import com.github.foskel.haptor.Haptor;
+import com.github.foskel.haptor.scan.ClassUnsatisfiedDependencyScanner;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -18,9 +18,12 @@ import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractModule implements Module {
-    protected final ClassDependencySystem<Module> dependencySystem = new ClassDependencySystem<>();
-    protected final PropertyManager propertyManager = new StandardPropertyManager();
+    private final DependencySystem<Module, Class<? extends Module>, Module> dependencySystem;
     private Path dataFile;
+
+    public AbstractModule() {
+        this.dependencySystem = Haptor.newDependencySystem(ClassUnsatisfiedDependencyScanner.INSTANCE);
+    }
 
     private static String identityToString(Object o) {
         return o.getClass().getName() + "@" + Integer.toHexString(o.hashCode());
@@ -28,7 +31,7 @@ public abstract class AbstractModule implements Module {
 
     @Override
     public void load() {
-        this.dependencySystem.registerDependencies(this);
+        this.dependencySystem.register(this);
         this.registerAttributes();
     }
 
@@ -38,8 +41,7 @@ public abstract class AbstractModule implements Module {
 
     @Override
     public void unload() {
-        this.dependencySystem.unregisterDependencies(this);
-        this.propertyManager.unregister(this);
+        this.dependencySystem.unregister(this);
         this.unregisterAttributes();
     }
 
@@ -60,24 +62,11 @@ public abstract class AbstractModule implements Module {
     }
 
     @Override
-    public PropertyManager getPropertyManager() {
-        return this.propertyManager;
-    }
-
-    @Override
-    public ClassDependencySystem<Module> getDependencySystem() {
-        return this.dependencySystem;
-    }
-
-    @Override
     public String toString() {
         return identityToString(this) + "{" +
                 (this.getName() == null
                         ? "<null>"
-                        : identityToString(this.getName()) + "[" + this.getName() + "]") + "," +
-                (this.propertyManager.findAllProperties() == null
-                        ? "<null>"
-                        : identityToString(this.propertyManager.findAllProperties()) + "[" + this.propertyManager.findAllProperties() + "]")
+                        : identityToString(this.getName()) + "[" + this.getName() + "]") + ","
                 + "}";
     }
 

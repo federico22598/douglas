@@ -39,41 +39,6 @@ public final class PathValidatingPluginScanningStrategy implements PluginScannin
         this.resourceHandler = resourceHandler;
     }
 
-    private static boolean shouldLoadFile(Path file) {
-        String fileName = file.getFileName().toString();
-
-        return Files.isRegularFile(file) && fileName.endsWith(".jar");
-    }
-
-    private static void addFileURLTo(URLPluginClassLoader parentClassLoader,
-                                     Path file) {
-        try {
-            parentClassLoader.addURL(file.toUri().toURL());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static ClassLoader getClassLoaderFromFile(URLClassLoader parent,
-                                                      Path file) {
-        URL fileURL = Arrays.stream(parent.getURLs())
-                .filter(url -> {
-                    try {
-                        return url.equals(file.toUri().toURL());
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-
-                    return false;
-                })
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("The URLClassLoader " +
-                        "\"" + parent.getClass().getSimpleName() + "\" does not contain " +
-                        "any URL(s) for the Path \"" + file.getFileName().toString() + "\""));
-
-        return new URLClassLoader(new URL[]{fileURL}, parent);
-    }
-
     @Override
     public Collection<PluginScanResult> scan(Path directory) throws PluginScanFailedException {
         this.validatePath(directory);
@@ -111,5 +76,40 @@ public final class PathValidatingPluginScanningStrategy implements PluginScannin
 
     private void validatePath(Path path) {
         this.pathValidators.forEach(validator -> validator.validate(path));
+    }
+
+    private static boolean shouldLoadFile(Path file) {
+        String fileName = file.getFileName().toString();
+
+        return Files.isRegularFile(file) && fileName.endsWith(".jar");
+    }
+
+    private static ClassLoader getClassLoaderFromFile(URLClassLoader parent,
+                                                      Path file) {
+        URL fileURL = Arrays.stream(parent.getURLs())
+                .filter(url -> {
+                    try {
+                        return url.equals(file.toUri().toURL());
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+
+                    return false;
+                })
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("The URLClassLoader " +
+                        "\"" + parent.getClass().getSimpleName() + "\" does not contain " +
+                        "any URL(s) for the Path \"" + file.getFileName().toString() + "\""));
+
+        return new URLClassLoader(new URL[]{fileURL}, parent);
+    }
+
+    private static void addFileURLTo(URLPluginClassLoader parentClassLoader,
+                                     Path file) {
+        try {
+            parentClassLoader.addURL(file.toUri().toURL());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 }

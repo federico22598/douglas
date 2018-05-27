@@ -4,11 +4,10 @@ import com.github.foskel.douglas.module.Module;
 import com.github.foskel.douglas.module.ModuleManager;
 import com.github.foskel.douglas.module.locate.ModuleLocatorService;
 import com.github.foskel.douglas.util.Exceptions;
-import com.github.foskel.haptor.exceptions.UnsatisfiedDependencyException;
-import com.github.foskel.haptor.impl.ClassDependencySystem;
-import com.github.foskel.haptor.impl.process.ObservableDependencySatisfyingProcessorBuilder;
-import com.github.foskel.haptor.process.DependencySatisfyingProcessor;
+import com.github.foskel.haptor.DependencySystem;
+import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
+import com.github.foskel.haptor.satisfy.UnsatisfiedDependencyException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -17,11 +16,10 @@ import java.util.stream.Collectors;
 public final class SimpleModuleDependencySatisfyingService implements ModuleDependencySatisfyingService {
 
     private static boolean hasDependencies(Module module) {
-        ClassDependencySystem<Module> dependencySystem = module.getDependencySystem();
-        DependencyRegistry<Object, Class<? extends Module>, Module> dependencyRegistry =
-                dependencySystem.getDependencyRegistry();
+        DependencySystem<Module, Class<? extends Module>, Module> dependencySystem = module.getDependencySystem();
+        DependencyRegistry<Class<? extends Module>, Module> dependencyRegistry = dependencySystem.getRegistry();
 
-        return dependencyRegistry.hasDependencies();
+        return !dependencyRegistry.findAllDependencies().isEmpty();
     }
 
     @Override
@@ -33,7 +31,7 @@ public final class SimpleModuleDependencySatisfyingService implements ModuleDepe
     }
 
     private void satisfyModuleDependencies(Module module, ModuleManager moduleManager) {
-        Map<Class<? extends Module>, Module> dependencies = module.getDependencySystem()
+        Map<Class<? extends Module>, Module> dependencies = module.getDependencySystem().getRegistry()
                 .findAllDependencies()
                 .entrySet()
                 .stream()
@@ -48,11 +46,12 @@ public final class SimpleModuleDependencySatisfyingService implements ModuleDepe
     }
 
     private void registerDefaultDependencyProcessors(Module module, ModuleManager moduleManager) {
-        ClassDependencySystem<Module> dependencySystem = module.getDependencySystem();
-        DependencySatisfyingProcessor moduleRemoveProcessor = new ObservableDependencySatisfyingProcessorBuilder()
-                .withFailedValidationListener(object -> moduleManager.unregister(module.getName()))
-
-                .build();
+        DependencySystem<Module, Class<? extends Module>, Module> dependencySystem = module.getDependencySystem();
+        DependencyProcessor moduleRemoveProcessor = result -> {
+            if (!result.getValidationResult()) {
+                moduleManager.unregister(module.getName());
+            }
+        };
 
         dependencySystem.registerProcessor(moduleRemoveProcessor);
     }

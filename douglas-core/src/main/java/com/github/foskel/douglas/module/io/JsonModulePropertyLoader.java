@@ -21,7 +21,7 @@ import java.util.*;
 public final class JsonModulePropertyLoader implements ModulePropertyLoader {
 
     @Override
-    public void load(Collection<Module> modules, Path directory) throws IOException {
+    public void load(Collection<Module> modules, Path directory) {
         if (modules.isEmpty()) {
             return;
         }

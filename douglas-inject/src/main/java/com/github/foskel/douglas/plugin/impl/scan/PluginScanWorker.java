@@ -10,12 +10,11 @@ import com.github.foskel.douglas.plugin.resource.ResourceHandler;
 import com.github.foskel.douglas.plugin.scan.PluginScanFailedException;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 import com.github.foskel.douglas.util.Exceptions;
-import com.google.common.reflect.ClassPath;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class PluginScanWorker {
     private final InstantiationStrategy<Plugin> instantiationStrategy;
@@ -33,40 +32,39 @@ public final class PluginScanWorker {
         this.classLoader = classLoader;
     }
 
-    private static void registerDependencies(Plugin plugin, Path file) {
-        plugin.getDependencySystem().registerDependencies(file);
-    }
-
     public PluginScanResult scan(Path file) throws PluginScanFailedException {
-        ClassPath classPath;
-        PluginDescriptor data;
+        PluginDescriptor descriptor;
 
         try {
-            classPath = ClassPath.from(this.classLoader);
-            data = this.extractorService.extract(file);
+            descriptor = this.extractorService.extract(file);
         } catch (IOException e) {
-            throw new PluginScanFailedException(e.getMessage());
+            throw new PluginScanFailedException("Unable to scan '" + file + "':", e);
         }
 
-        String packageId = data.getPackageId();
-        String className = data.getMainClassName();
+        String mainClass = descriptor.getMainClass();
+        AtomicReference<Plugin> pluginHolder = new AtomicReference<>();
 
-        Stream<ClassPath.ClassInfo> classes = classPath.getTopLevelClasses(packageId).stream();
-        Plugin plugin = classes.filter(classInfo -> classInfo.getSimpleName().equals(className))
-                .map(ClassPath.ClassInfo::load)
-                .peek(type -> this.handleResources(data, type))
-                .filter(Plugin.class::isAssignableFrom)
-                .map(this::instantiate)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new PluginScanFailedException(
-                        "Unable to find a valid plugin class which name matches " +
-                                "\"" + className + "\" and package " +
-                                "\"" + packageId + "\""));
+        new FastClasspathScanner(mainClass)
+                .addClassLoader(this.classLoader)
+                .matchClassesImplementing(Plugin.class, type -> {
+                    this.handleResources(descriptor, type);
+                    pluginHolder.set(this.instantiate(type));
+                })
+                .scan();
 
-        registerDependencies(plugin, file);
+        Plugin plugin = pluginHolder.get();
 
-        return new SimplePluginScanResult(data, plugin);
+        if (plugin == null) {
+            throw new PluginScanFailedException("Unable to find a valid plugin class which name matches \"" + mainClass + "\"");
+        }
+
+        registerDependencies(plugin, descriptor);
+
+        return new SimplePluginScanResult(descriptor, plugin);
+    }
+
+    private static void registerDependencies(Plugin plugin, PluginDescriptor descriptor) {
+        plugin.getDependencySystem().register(descriptor);
     }
 
     private void handleResources(PluginDescriptor descriptor,

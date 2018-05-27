@@ -2,12 +2,12 @@ package com.github.foskel.douglas.plugin.dependency.satisfy;
 
 import com.github.foskel.douglas.core.descriptor.Descriptor;
 import com.github.foskel.douglas.plugin.Plugin;
-import com.github.foskel.haptor.exceptions.UnsatisfiedDependencyException;
-import com.github.foskel.haptor.impl.satisfy.SimpleDependencySatisfyingResult;
-import com.github.foskel.haptor.process.DependencySatisfyingProcessor;
+import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
+import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingStrategy;
+import com.github.foskel.haptor.satisfy.UnsatisfiedDependencyException;
 import com.github.foskel.haptor.validate.DependencyValidatorService;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy {
+public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy<PluginDescriptor, Plugin> {
     private final DependencyValidatorService validatorService;
 
     public PluginDependencySatisfyingStrategy(DependencyValidatorService validatorService) {
@@ -23,41 +23,9 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public DependencySatisfyingResult satisfy(Object dependencyIdentifier,
-                                              Object dependency,
-                                              DependencyRegistry registry,
-                                              Set<DependencySatisfyingProcessor> processors) {
-        if (dependency != null) {
-            if (registry.has(dependencyIdentifier)) {
-                registry.registerDirectly(dependencyIdentifier, dependency);
-            }
-
-            boolean validatingResult = this.validatorService.validate(dependency);
-
-            DependencySatisfyingResult result = new SimpleDependencySatisfyingResult(dependencyIdentifier,
-                    dependency,
-                    validatingResult);
-
-            processors.forEach(processor -> {
-                try {
-                    processor.postSatisfy(result);
-                } catch (UnsatisfiedDependencyException exception) {
-                    exception.printStackTrace();
-                }
-            });
-
-            return result;
-        }
-
-        return null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<DependencySatisfyingResult> satisfy(DependencyRegistry registry,
-                                                    Set<DependencySatisfyingProcessor> processors,
-                                                    Map<Object, Object> dependencies) {
+    public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(DependencyRegistry<PluginDescriptor, Plugin> registry,
+                                                    Set<DependencyProcessor> processors,
+                                                    Map<PluginDescriptor, Plugin> dependencies) {
         if (!dependencies.isEmpty()) {
             dependencies.forEach((identifier, dependency) -> {
                 if (dependency != null) {
@@ -68,15 +36,14 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
             });
         }
 
-        List<DependencySatisfyingResult> results = new ArrayList<>(registry.findAllDependencies().size());
+        List<DependencySatisfyingResult<PluginDescriptor, Plugin>> results = new ArrayList<>(registry.findAllDependencies().size());
 
-        for (Map.Entry<Descriptor, Plugin> dependencyEntry : (Set<Map.Entry>) registry.findAllDependencies().entrySet()) {
-            Descriptor dependencyIdentifier = dependencyEntry.getKey();
+        for (Map.Entry<PluginDescriptor, Plugin> dependencyEntry : registry.findAllDependencies().entrySet()) {
+            PluginDescriptor dependencyIdentifier = dependencyEntry.getKey();
             Plugin dependency = dependencyEntry.getValue();
 
             boolean validatingResult = this.validatorService.validate(dependency);
-
-            DependencySatisfyingResult result = new SimpleDependencySatisfyingResult(dependencyIdentifier,
+            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
                     dependency,
                     validatingResult);
 
@@ -92,5 +59,34 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
         }
 
         return results;
+    }
+
+    private DependencySatisfyingResult satisfy(PluginDescriptor dependencyIdentifier,
+                                               Plugin dependency,
+                                               DependencyRegistry<PluginDescriptor, Plugin> registry,
+                                               Set<DependencyProcessor> processors) {
+        if (dependency != null) {
+            if (registry.has(dependencyIdentifier)) {
+                registry.registerDirectly(dependencyIdentifier, dependency);
+            }
+
+            boolean validatingResult = this.validatorService.validate(dependency);
+
+            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
+                    dependency,
+                    validatingResult);
+
+            processors.forEach(processor -> {
+                try {
+                    processor.postSatisfy(result);
+                } catch (UnsatisfiedDependencyException exception) {
+                    exception.printStackTrace();
+                }
+            });
+
+            return result;
+        }
+
+        return null;
     }
 }

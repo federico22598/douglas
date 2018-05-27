@@ -1,9 +1,8 @@
 package com.github.foskel.douglas.module;
 
-import com.github.foskel.camden.property.PropertyManager;
 import com.github.foskel.douglas.core.traits.Loadable;
 import com.github.foskel.douglas.core.traits.Reloadable;
-import com.github.foskel.haptor.impl.ClassDependencySystem;
+import com.github.foskel.haptor.DependencySystem;
 
 import java.nio.file.Path;
 
@@ -34,7 +33,5 @@ public interface Module extends Loadable, Reloadable {
 
     void setDataFile(Path dataFile);
 
-    PropertyManager getPropertyManager();
-
-    ClassDependencySystem<Module> getDependencySystem();
+    DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem();
 }

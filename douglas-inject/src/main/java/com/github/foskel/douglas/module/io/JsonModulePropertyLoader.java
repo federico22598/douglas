@@ -19,7 +19,7 @@ import java.util.*;
 public final class JsonModulePropertyLoader implements ModulePropertyLoader {
 
     @Override
-    public void load(Collection<Module> modules, Path directory) throws IOException {
+    public void load(Collection<Module> modules, Path directory) {
         if (modules.isEmpty()) {
             return;
         }
@@ -47,7 +47,7 @@ public final class JsonModulePropertyLoader implements ModulePropertyLoader {
     }
 
     @Override
-    public void load(Module module, InputStream resourceStream) throws IOException {
+    public void load(Module module, InputStream resourceStream) {
         PropertyManager propertyManager = module.getPropertyManager();
         Collection<Property<?>> properties = propertyManager.findAllProperties();
 

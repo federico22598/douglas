@@ -1,4 +1,4 @@
-group = 'com.github.foskel'
+group 'com.github.foskel.douglas'
 
 subprojects {
     apply plugin: 'java'
@@ -9,25 +9,22 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    group 'com.github.foskel'
-    version '0.1.0-RELEASE'
-    sourceCompatibility = 1.8
+    group 'com.github.foskel.douglas'
 
     if (project.name == 'douglas-core' || project.name == 'douglas-inject') {
         repositories {
-            mavenCentral()
-
             maven {
                 url 'https://jitpack.io'
             }
+
+            mavenCentral()
         }
 
-        //TODO: Stop using Guava?
         dependencies {
             compile 'com.google.code.gson:gson:2.8.4'
-            compile 'com.google.guava:guava:version:25.0-jre'
+            compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
             compile 'com.github.foskel:camden:-SNAPSHOT'
-            compile 'com.github.foskel:haptor:-SNAPSHOT'
+            compile 'com.github.foskel:haptor:bab6e0dd85'
         }
     }
 }

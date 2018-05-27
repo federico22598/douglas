@@ -64,7 +64,7 @@ public final class StandardPluginManager implements PluginManager {
     }
 
     @Override
-    public void unload() throws IOException {
+    public void unload() {
         this.unloadAllPlugins();
         this.registry.clear();
     }
