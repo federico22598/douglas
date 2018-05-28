@@ -23,8 +23,7 @@ subprojects {
         dependencies {
             compile 'com.google.code.gson:gson:2.8.4'
             compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
-            compile 'com.github.foskel:camden:-SNAPSHOT'
-            compile 'com.github.foskel:haptor:bab6e0dd85'
+            compile 'com.github.foskel:haptor:-SNAPSHOT'
         }
     }
 }

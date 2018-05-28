@@ -3,9 +3,8 @@ package com.github.foskel.douglas.plugin.impl.scan;
 import com.github.foskel.douglas.instantiation.InstantiationException;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
-import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
-import com.github.foskel.douglas.plugin.descriptor.extract.PluginDescriptorExtractor;
-import com.github.foskel.douglas.plugin.impl.scan.result.SimplePluginScanResult;
+import com.github.foskel.douglas.plugin.manifest.PluginManifest;
+import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.resource.ResourceHandler;
 import com.github.foskel.douglas.plugin.scan.PluginScanFailedException;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
@@ -18,12 +17,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class PluginScanWorker {
     private final InstantiationStrategy<Plugin> instantiationStrategy;
-    private final PluginDescriptorExtractor extractorService;
+    private final PluginManifestExtractor extractorService;
     private final ResourceHandler resourceHandler;
     private final ClassLoader classLoader;
 
     public PluginScanWorker(InstantiationStrategy<Plugin> instantiationStrategy,
-                            PluginDescriptorExtractor extractorService,
+                            PluginManifestExtractor extractorService,
                             ResourceHandler resourceHandler,
                             ClassLoader classLoader) {
         this.instantiationStrategy = instantiationStrategy;
@@ -33,21 +32,21 @@ public final class PluginScanWorker {
     }
 
     public PluginScanResult scan(Path file) throws PluginScanFailedException {
-        PluginDescriptor descriptor;
+        PluginManifest manifest;
 
         try {
-            descriptor = this.extractorService.extract(file);
+            manifest = this.extractorService.extract(file);
         } catch (IOException e) {
             throw new PluginScanFailedException("Unable to scan '" + file + "':", e);
         }
 
-        String mainClass = descriptor.getMainClass();
+        String mainClass = manifest.getMainClass();
         AtomicReference<Plugin> pluginHolder = new AtomicReference<>();
 
         new FastClasspathScanner(mainClass)
                 .addClassLoader(this.classLoader)
                 .matchClassesImplementing(Plugin.class, type -> {
-                    this.handleResources(descriptor, type);
+                    this.handleResources(manifest, type);
                     pluginHolder.set(this.instantiate(type));
                 })
                 .scan();
@@ -58,18 +57,18 @@ public final class PluginScanWorker {
             throw new PluginScanFailedException("Unable to find a valid plugin class which name matches \"" + mainClass + "\"");
         }
 
-        registerDependencies(plugin, descriptor);
+        registerDependencies(plugin, manifest);
 
-        return new SimplePluginScanResult(descriptor, plugin);
+        return new SimplePluginScanResult(manifest, plugin);
     }
 
-    private static void registerDependencies(Plugin plugin, PluginDescriptor descriptor) {
+    private static void registerDependencies(Plugin plugin, PluginManifest descriptor) {
         plugin.getDependencySystem().register(descriptor);
     }
 
-    private void handleResources(PluginDescriptor descriptor,
+    private void handleResources(PluginManifest descriptor,
                                  Class<?> type) {
-        if (descriptor.getResourceTargets().contains(type.getCanonicalName())) {
+        if (descriptor.getResources().contains(type.getCanonicalName())) {
             this.resourceHandler.handle(type, this.classLoader);
         }
     }

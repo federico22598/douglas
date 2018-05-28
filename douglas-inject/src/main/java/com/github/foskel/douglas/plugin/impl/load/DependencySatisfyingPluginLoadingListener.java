@@ -2,11 +2,10 @@ package com.github.foskel.douglas.plugin.impl.load;
 
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
-import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
 import com.github.foskel.douglas.plugin.impl.dependency.process.PluginRemovingDependencySatisfyingProcessor;
 import com.github.foskel.douglas.plugin.impl.dependency.process.supply.SupplyingDependencySatisfyingProcessor;
 import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
-import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
+import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.haptor.process.DependencyProcessor;
 
@@ -26,11 +25,10 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
         registry.findAllPlugins().forEach((descriptor, plugin) -> this.satisfyPluginDependencies(descriptor, plugin, registry));
     }
 
-    private void satisfyPluginDependencies(PluginDescriptor descriptor,
+    private void satisfyPluginDependencies(PluginManifest descriptor,
                                            Plugin plugin,
                                            PluginRegistry registry) {
         PluginDependencySystem dependencySystem = plugin.getDependencySystem();
-        PluginLocatorService locatorService = registry.getLocator();
 
         this.addDefaultProcessors(descriptor,
                 plugin,
@@ -40,10 +38,10 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
             this.satisfyingProcessors.forEach(dependencySystem::registerProcessor);
         }
 
-        dependencySystem.satisfy(locatorService);
+        dependencySystem.satisfy();
     }
 
-    private void addDefaultProcessors(PluginDescriptor descriptor,
+    private void addDefaultProcessors(PluginManifest descriptor,
                                       Plugin plugin,
                                       PluginRegistry registry) {
         this.satisfyingProcessors.add(new PluginRemovingDependencySatisfyingProcessor(registry, descriptor));

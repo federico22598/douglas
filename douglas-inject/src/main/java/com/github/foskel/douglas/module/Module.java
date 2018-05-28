@@ -1,11 +1,9 @@
 package com.github.foskel.douglas.module;
 
-import com.github.foskel.camden.property.PropertyManager;
 import com.github.foskel.douglas.core.traits.Loadable;
+import com.github.foskel.douglas.core.traits.Named;
 import com.github.foskel.douglas.core.traits.Reloadable;
-import com.github.foskel.haptor.StandardDependencySystem;
-
-import java.nio.file.Path;
+import com.github.foskel.haptor.DependencySystem;
 
 /**
  * TODO: Stop making each Module have its own PropertyManager
@@ -14,8 +12,9 @@ import java.nio.file.Path;
  * @since 4/4/2017
  */
 
-public interface Module extends Loadable, Reloadable {
+public interface Module extends Named, Loadable, Reloadable {
 
+    @Override
     String getName();
 
     @Override
@@ -30,7 +29,5 @@ public interface Module extends Loadable, Reloadable {
         this.load();
     }
 
-    Path getDataFile();
-
-    void setDataFile(Path dataFile);
+    DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem();
 }

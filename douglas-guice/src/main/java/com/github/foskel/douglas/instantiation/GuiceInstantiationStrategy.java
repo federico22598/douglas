@@ -19,16 +19,6 @@ public final class GuiceInstantiationStrategy<T> implements InstantiationStrateg
         this.parentInjector = parentInjector;
     }
 
-    private static <T> Stream<T> stream(Iterable<T> iterable) {
-        if (iterable instanceof Collection) {
-            Collection<T> collection = (Collection<T>) iterable;
-
-            return collection.stream();
-        }
-
-        return StreamSupport.stream(iterable.spliterator(), false);
-    }
-
     @Override
     public T instantiate(Class<? extends T> type, ClassLoader classLoader) throws InstantiationException {
         Injector childInjector = this.getChildInjector(classLoader);
@@ -58,5 +48,15 @@ public final class GuiceInstantiationStrategy<T> implements InstantiationStrateg
         }
 
         return this.parentInjector.createChildInjector(moduleServiceLoader);
+    }
+
+    private static <T> Stream<T> stream(Iterable<T> iterable) {
+        if (iterable instanceof Collection) {
+            Collection<T> collection = (Collection<T>) iterable;
+
+            return collection.stream();
+        }
+
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 }

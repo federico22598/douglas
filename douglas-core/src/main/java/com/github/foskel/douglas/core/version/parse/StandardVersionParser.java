@@ -111,7 +111,7 @@ public enum StandardVersionParser implements VersionParser {
             return true;
         }
 
-        if (this.input[pos] == '+') { // We have build meta tagNames -> descend
+        if (this.input[pos] == '+') { // We have xml meta tagNames -> descend
             return stateMeta(pos + 1);
         }
 

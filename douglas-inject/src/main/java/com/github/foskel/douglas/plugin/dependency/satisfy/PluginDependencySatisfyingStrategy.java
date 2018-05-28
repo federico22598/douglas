@@ -1,7 +1,7 @@
 package com.github.foskel.douglas.plugin.dependency.satisfy;
 
 import com.github.foskel.douglas.plugin.Plugin;
-import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
+import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy<PluginDescriptor, Plugin> {
+public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy<PluginManifest, Plugin> {
     private final DependencyValidatorService validatorService;
 
     public PluginDependencySatisfyingStrategy(DependencyValidatorService validatorService) {
@@ -22,9 +22,9 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
     }
 
     @Override
-    public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(DependencyRegistry<PluginDescriptor, Plugin> registry,
-                                                    Set<DependencyProcessor> processors,
-                                                    Map<PluginDescriptor, Plugin> dependencies) {
+    public List<DependencySatisfyingResult<PluginManifest, Plugin>> satisfy(DependencyRegistry<PluginManifest, Plugin> registry,
+                                                                            Set<DependencyProcessor> processors,
+                                                                            Map<PluginManifest, Plugin> dependencies) {
         if (!dependencies.isEmpty()) {
             dependencies.forEach((identifier, dependency) -> {
                 if (dependency != null) {
@@ -35,14 +35,14 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
             });
         }
 
-        List<DependencySatisfyingResult<PluginDescriptor, Plugin>> results = new ArrayList<>(registry.findAllDependencies().size());
+        List<DependencySatisfyingResult<PluginManifest, Plugin>> results = new ArrayList<>(registry.findAllDependencies().size());
 
-        for (Map.Entry<PluginDescriptor, Plugin> dependencyEntry : registry.findAllDependencies().entrySet()) {
-            PluginDescriptor dependencyIdentifier = dependencyEntry.getKey();
+        for (Map.Entry<PluginManifest, Plugin> dependencyEntry : registry.findAllDependencies().entrySet()) {
+            PluginManifest dependencyIdentifier = dependencyEntry.getKey();
             Plugin dependency = dependencyEntry.getValue();
 
             boolean validatingResult = this.validatorService.validate(dependency);
-            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
+            DependencySatisfyingResult<PluginManifest, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
                     dependency,
                     validatingResult);
 
@@ -60,9 +60,9 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
         return results;
     }
 
-    private DependencySatisfyingResult satisfy(PluginDescriptor dependencyIdentifier,
+    private DependencySatisfyingResult satisfy(PluginManifest dependencyIdentifier,
                                                Plugin dependency,
-                                               DependencyRegistry<PluginDescriptor, Plugin> registry,
+                                               DependencyRegistry<PluginManifest, Plugin> registry,
                                                Set<DependencyProcessor> processors) {
         if (dependency != null) {
             if (registry.has(dependencyIdentifier)) {
@@ -71,7 +71,7 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
 
             boolean validatingResult = this.validatorService.validate(dependency);
 
-            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
+            DependencySatisfyingResult<PluginManifest, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
                     dependency,
                     validatingResult);
 

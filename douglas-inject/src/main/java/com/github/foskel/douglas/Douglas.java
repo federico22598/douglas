@@ -2,11 +2,14 @@ package com.github.foskel.douglas;
 
 import com.github.foskel.douglas.core.version.Tag;
 import com.github.foskel.douglas.core.version.Version;
-import com.github.foskel.douglas.plugin.descriptor.extract.PluginDescriptorExtractor;
-import com.github.foskel.douglas.plugin.descriptor.extract.PluginDescriptorExtractors;
-import com.github.foskel.douglas.plugin.impl.descriptor.extract.ClassLoaderDataFileURLExtractor;
-import com.github.foskel.douglas.plugin.impl.descriptor.extract.PluginDescriptorExtractorBuilder;
-import com.github.foskel.douglas.plugin.impl.descriptor.extract.XMLPluginDescriptorParser;
+import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
+import com.github.foskel.douglas.plugin.impl.dependency.StandardPluginDependencySystem;
+import com.github.foskel.douglas.plugin.impl.locate.SimplePluginLocatorProvider;
+import com.github.foskel.douglas.plugin.impl.manifest.extract.ClassLoaderDataFileURLExtractor;
+import com.github.foskel.douglas.plugin.impl.manifest.extract.XMLPluginDescriptorParser;
+import com.github.foskel.douglas.plugin.manifest.extract.PluginDescriptorExtractors;
+import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
+import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractorBuilder;
 
 @SuppressWarnings("WeakerAccess")
 public final class Douglas {
@@ -25,16 +28,19 @@ public final class Douglas {
         return VERSION;
     }
 
-    public static PluginDescriptorExtractor newPluginDescriptorExtractor() {
+    public static PluginDependencySystem newPluginDependencySystem() {
+        return new StandardPluginDependencySystem(new SimplePluginLocatorProvider());
+    }
+
+    public static PluginManifestExtractor newPluginDescriptorExtractor() {
         return newPluginDescriptorExtractorBuilder()
                 .withDataFileURLExtractor(new ClassLoaderDataFileURLExtractor())
                 .withDescriptorParser(new XMLPluginDescriptorParser())
                 .withDataFilePath(PluginDescriptorExtractors.getStandardConfigurationFilePath())
-
-                .build();
+                .xml();
     }
 
-    public static PluginDescriptorExtractorBuilder newPluginDescriptorExtractorBuilder() {
-        return new PluginDescriptorExtractorBuilder();
+    public static PluginManifestExtractorBuilder newPluginDescriptorExtractorBuilder() {
+        return new PluginManifestExtractorBuilder();
     }
 }

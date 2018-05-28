@@ -1,12 +1,14 @@
 package com.github.foskel.douglas.plugin.dependency;
 
 import com.github.foskel.douglas.plugin.Plugin;
-import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
-import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
+import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.haptor.DependencySystem;
 
-public interface PluginDependencySystem extends DependencySystem<PluginDescriptor, PluginDescriptor, Plugin> {
-    void satisfy(PluginLocatorService dependencyLocator);
+public interface PluginDependencySystem extends DependencySystem<PluginManifest, PluginManifest, Plugin> {
+    void satisfy();
 
-    <T extends Plugin> T find(String groupId, String artifactId, String name, String version);
+    <T extends Plugin> T find(String groupId,
+                              String artifactId,
+                              String version,
+                              String name);
 }

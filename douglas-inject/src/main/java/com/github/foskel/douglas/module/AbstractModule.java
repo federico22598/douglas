@@ -1,9 +1,9 @@
 package com.github.foskel.douglas.module;
 
-import com.github.foskel.douglas.module.attribute.AnnotationAttributeManager;
-import com.github.foskel.douglas.module.attribute.AttributeManager;
+import com.github.foskel.haptor.DependencySystem;
+import com.github.foskel.haptor.Haptor;
+import com.github.foskel.haptor.scan.ClassUnsatisfiedDependencyScanner;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -15,56 +15,44 @@ import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractModule implements Module {
-    private Path dataFile;
+    private final String name;
+    private final DependencySystem<Module, Class<? extends Module>, Module> dependencySystem;
 
-    private static String identityToString(Object o) {
-        return o.getClass().getName() + "@" + Integer.toHexString(o.hashCode());
+    public AbstractModule(String name) {
+        this.name = name;
+        this.dependencySystem = Haptor.newDependencySystem(ClassUnsatisfiedDependencyScanner.INSTANCE);
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     @Override
     public void load() {
-        this.registerAttributes();
-    }
-
-    private void registerAttributes() {
-        AnnotationAttributeManager.INSTANCE.scanAndRegister(this.getClass());
+        this.dependencySystem.register(this);
     }
 
     @Override
     public void unload() {
-        this.unregisterAttributes();
-    }
-
-    private void unregisterAttributes() {
-        AttributeManager attributeManager = AnnotationAttributeManager.INSTANCE;
-
-        attributeManager.unregister(this.getClass());
+        this.dependencySystem.unregister(this);
     }
 
     @Override
-    public Path getDataFile() {
-        return this.dataFile;
+    public DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem() {
+        return this.dependencySystem;
     }
-
-    @Override
-    public void setDataFile(Path dataFile) {
-        this.dataFile = dataFile;
-    }
-
+    
     @Override
     public String toString() {
-        return identityToString(this) + "{" +
-                (this.getName() == null
-                        ? "<null>"
-                        : identityToString(this.getName()) + "[" + this.getName() + "]") + ","
-                + "}";
+        return this.name;
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
 
-        hash = 31 * hash + this.getName().hashCode();
+        hash = 31 * hash + this.name.hashCode();
 
         return hash;
     }

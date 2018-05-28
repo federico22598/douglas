@@ -1,12 +1,9 @@
 package com.github.foskel.douglas.module;
 
 import com.github.foskel.douglas.module.dependency.ModuleDependencySatisfyingService;
-import com.github.foskel.douglas.module.io.ModulePropertyLoader;
-import com.github.foskel.douglas.module.io.ModulePropertySaver;
-import com.github.foskel.douglas.module.locate.ModuleLocatorProvider;
 import com.github.foskel.douglas.module.locate.ModuleLocatorService;
+import com.github.foskel.douglas.module.locate.SynchronizedModuleLocator;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -20,45 +17,32 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  */
 public final class SynchronizedModuleManager implements ModuleManager {
     private final Map<String, Module> modules;
-    private final ModuleLocatorProvider locatorProvider;
-    private final ModulePropertyLoader propertyLoader;
-    private final ModulePropertySaver propertySaver;
     private final ModuleDependencySatisfyingService dependencySatisfier;
-    private volatile ModuleLocatorService locator;
+    private final ModuleLocatorService locator;
 
     public SynchronizedModuleManager(Map<String, Module> modules,
-                                     ModuleLocatorProvider locatorProvider,
-                                     ModulePropertyLoader propertyLoader,
-                                     ModulePropertySaver propertySaver,
                                      ModuleDependencySatisfyingService dependencySatisfier) {
         this.modules = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         this.modules.putAll(modules);
 
-        this.locatorProvider = locatorProvider;
-        this.propertyLoader = propertyLoader;
-        this.propertySaver = propertySaver;
         this.dependencySatisfier = dependencySatisfier;
+        this.locator = new SynchronizedModuleLocator(() -> this.modules);
     }
 
     @Override
-    public void load(Path directory) throws IOException {
-        if (directory != null) {
-            synchronized (this.modules) {
-                this.propertyLoader.load(this.modules.values(), directory);
-            }
+    public void load(Path directory) {
+        synchronized (this.modules) {
+            this.modules.values().forEach(Module::load);
         }
 
-        this.modules.values().forEach(Module::load);
         this.dependencySatisfier.satisfy(this);
     }
 
     @Override
-    public void unload(Path directory) throws IOException {
+    public void unload(Path directory) {
         Objects.requireNonNull(directory, "directory");
 
         synchronized (this.modules) {
-            this.propertySaver.save(this.modules.values(), directory);
-
             this.modules.values().forEach(Module::unload);
             this.modules.clear();
         }
@@ -71,7 +55,7 @@ public final class SynchronizedModuleManager implements ModuleManager {
         synchronized (this.modules) {
             String moduleIdentifier = module.getName();
 
-            if (this.modules.containsKey(moduleIdentifier) || this.modules.containsValue(module)) {
+            if (this.modules.containsKey(moduleIdentifier)) {
                 return false;
             }
 
@@ -98,14 +82,6 @@ public final class SynchronizedModuleManager implements ModuleManager {
 
     @Override
     public ModuleLocatorService getLocator() {
-        synchronized (this) {
-            if (this.locator != null) {
-                return this.locator;
-            }
-
-            this.locator = this.locatorProvider.create(this.modules);
-        }
-
         return this.locator;
     }
 

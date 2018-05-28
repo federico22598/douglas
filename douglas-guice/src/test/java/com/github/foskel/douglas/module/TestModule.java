@@ -1,11 +1,9 @@
 package com.github.foskel.douglas.module;
 
-import com.github.foskel.camden.property.properties.StringProperty;
-import com.github.foskel.camden.property.scan.annotation.Propertied;
-
-@Propertied
 public final class TestModule extends AbstractModule {
-    private final StringProperty testStringProperty = new StringProperty("name", "value");
+    TestModule() {
+        super("Test");
+    }
 
     @Override
     public void load() {
@@ -19,14 +17,5 @@ public final class TestModule extends AbstractModule {
         super.unload();
 
         System.out.println("Unloading " + this.getClass().getSimpleName());
-    }
-
-    @Override
-    public String getName() {
-        return "Test";
-    }
-
-    public StringProperty getTestStringProperty() {
-        return this.testStringProperty;
     }
 }

@@ -1,14 +1,14 @@
 package com.github.foskel.douglas.plugin.impl.dependency.process.supply;
 
+import com.github.foskel.douglas.annotations.Supply;
 import com.github.foskel.douglas.core.version.Version;
 import com.github.foskel.douglas.core.version.Versions;
 import com.github.foskel.douglas.core.version.parse.VersionParsingException;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.dependency.supply.DependencySupplyingException;
 import com.github.foskel.douglas.plugin.dependency.supply.DependencySupplyingStrategy;
-import com.github.foskel.douglas.plugin.descriptor.PluginDescriptor;
-import com.github.foskel.douglas.plugin.impl.descriptor.PluginDescriptorBuilder;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -38,26 +38,23 @@ public final class FieldDependencySupplyingStrategy implements DependencySupplyi
                 .filter(field -> shouldReplace(field, source))
                 .forEach(field -> {
                     Supply supplyAnnotation = field.getAnnotation(Supply.class);
-
-                    PluginDescriptor information = getInformationFrom(supplyAnnotation);
-                    Plugin dependency = this.dependencyLocator.find(information)
-                            .orElseThrow(NoSuchElementException::new);
+                    PluginDescriptor descriptor = createDescriptor(supplyAnnotation);
+                    Plugin dependency = this.dependencyLocator.find(descriptor).orElseThrow(NoSuchElementException::new);
 
                     setValue(field, source, dependency);
                 });
     }
 
-    private static PluginDescriptor getInformationFrom(Supply supplyAnnotation) {
-        return new PluginDescriptorBuilder()
-                .withGroupId(supplyAnnotation.groupId())
-                .withArtifactId(supplyAnnotation.artifactId())
-                .withVersion(extractVersionFrom(supplyAnnotation.version()))
-                .withName(supplyAnnotation.name())
-
+    private static PluginDescriptor createDescriptor(Supply supplyAnnotation) {
+        return PluginDescriptor.builder()
+                .groupId(supplyAnnotation.groupId())
+                .artifactId(supplyAnnotation.artifactId())
+                .version(parseVersion(supplyAnnotation.version()))
+                .name(supplyAnnotation.name())
                 .build();
     }
 
-    private static Version extractVersionFrom(String versionAsString) {
+    private static Version parseVersion(String versionAsString) {
         try {
             return Versions.of(versionAsString);
         } catch (VersionParsingException e) {
@@ -81,8 +78,8 @@ public final class FieldDependencySupplyingStrategy implements DependencySupplyi
 
         Supply supplyAnnotation = field.getAnnotation(Supply.class);
 
-        PluginDescriptor information = getInformationFrom(supplyAnnotation);
-        Optional<Plugin> dependencyResult = this.dependencyLocator.find(information);
+        PluginDescriptor descriptor = createDescriptor(supplyAnnotation);
+        Optional<Plugin> dependencyResult = this.dependencyLocator.find(descriptor);
 
         if (!dependencyResult.isPresent()) {
             throw new DependencySupplyingException("Unable to supply plugin dependency instance " +

@@ -2,16 +2,14 @@ package com.github.foskel.douglas.plugin;
 
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public interface PluginManager {
-    void load(Path pluginsDirectory) throws IOException;
+    void load(Path pluginsDirectory);
 
-    void unload() throws IOException;
+    void loadSingle(Path pluginFile);
 
-    Optional<Plugin> find(String name);
+    void unload();
 
     PluginRegistry getRegistry();
 }

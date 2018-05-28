@@ -16,6 +16,10 @@ public abstract class ToggleableModule extends AbstractModule implements Togglea
     private final Queue<Consumer<ToggleableModule>> disableListeners = new ArrayDeque<>();
     private boolean enabled;
 
+    public ToggleableModule(String name) {
+        super(name);
+    }
+
     protected void onEnable() {
         this.enableListeners.forEach(listener -> listener.accept(this));
     }

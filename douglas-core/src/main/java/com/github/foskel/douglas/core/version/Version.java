@@ -14,6 +14,8 @@ public final class Version implements Comparable<Version> {
             Integer.MAX_VALUE,
             Integer.MAX_VALUE);
 
+    private static final String META_SEPARATOR = ".";
+
     private final int majorVersion;
     private final int minorVersion;
     private final int patchVersion;
@@ -59,9 +61,9 @@ public final class Version implements Comparable<Version> {
                 || patchVersion < minimumVersionNumber) {
             throw new IllegalArgumentException("The major, minor or patch version cannot be negative");
         } else if (tags == null) {
-            throw new IllegalArgumentException("The addTag set cannot be null");
+            throw new IllegalArgumentException("The tag set cannot be null");
         } else if (tags.contains(null)) {
-            throw new IllegalArgumentException("The addTag set cannot contain null elements");
+            throw new IllegalArgumentException("The tag set cannot contain null elements");
         }
     }
 
@@ -92,17 +94,13 @@ public final class Version implements Comparable<Version> {
     }
 
     private String getJoinedTags() {
-        String prefix = ".";
-
         return this.tags.stream()
                 .map(Tag::getName)
-                .collect(Collectors.joining(prefix));
+                .collect(Collectors.joining(META_SEPARATOR));
     }
 
     private String getJoinedMetadata() {
-        String prefix = ".";
-
-        return String.join(prefix, this.metadata);
+        return String.join(META_SEPARATOR, this.metadata);
     }
 
     @Override
