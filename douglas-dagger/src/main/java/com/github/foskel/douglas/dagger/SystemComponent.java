@@ -5,6 +5,9 @@ import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import dagger.Component;
 
+import javax.inject.Singleton;
+
+@Singleton
 @Component(modules = {PluginsModule.class, DouglasModulesModule.class})
 public interface SystemComponent {
     PluginManager pluginManager();

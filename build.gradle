@@ -1,4 +1,4 @@
-group 'com.github.foskel.douglas'
+group 'com.github.foskel'
 
 subprojects {
     apply plugin: 'java'
@@ -9,21 +9,28 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    group 'com.github.foskel.douglas'
+    group 'com.github.foskel'
+    version '0.2.0-RELEASE'
 
-    if (project.name == 'douglas-core' || project.name == 'douglas-inject') {
-        repositories {
-            maven {
-                url 'https://jitpack.io'
-            }
-
-            mavenCentral()
+    repositories {
+        maven {
+            url 'https://jitpack.io'
         }
 
-        dependencies {
-            compile 'com.google.code.gson:gson:2.8.4'
-            compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
-            compile 'com.github.foskel:haptor:-SNAPSHOT'
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'com.google.code.gson:gson:2.8.4'
+        compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
+        compile 'com.github.foskel:haptor:-SNAPSHOT'
+    }
+
+    jar {
+        from {
+            (configurations.runtime).collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 import com.github.foskel.douglas.plugin.scan.PluginScanningStrategy;
 
+import javax.inject.Inject;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -19,7 +20,8 @@ public final class StandardPluginManager implements PluginManager {
     private final PluginLoader loader;
     private final Collection<PluginLoadingListener> loadingListeners;
 
-    public StandardPluginManager(PluginScanningStrategy scanningStrategy,
+    @Inject
+    StandardPluginManager(PluginScanningStrategy scanningStrategy,
                                  PluginRegistry registry,
                                  PluginLoader loader,
                                  Collection<PluginLoadingListener> loadingListeners) {

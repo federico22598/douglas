@@ -4,9 +4,7 @@ plugins {
     id 'net.ltgt.apt' version '0.10'
 }
 
-apply plugin: "net.ltgt.apt"
-
-version '0.1.0-RELEASE'
+apply plugin: 'idea'
 
 repositories {
     mavenCentral()
