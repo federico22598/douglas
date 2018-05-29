@@ -15,7 +15,7 @@ import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor
 public final class Douglas {
     private static final Version VERSION = Version.builder()
             .major(0)
-            .minor(1)
+            .minor(2)
             .patch(0)
             .addTag(Tag.RELEASE)
 

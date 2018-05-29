@@ -70,13 +70,12 @@ public final class FieldDependencySupplyingStrategy implements DependencySupplyi
         }
     }
 
-    private boolean shouldReplace(Field field,
-                                  Object source) {
-        if (!field.isAnnotationPresent(Supply.class)) {
+    private boolean shouldReplace(Field field, Object source) {
+        Supply supplyAnnotation = field.getAnnotation(Supply.class);
+
+        if (supplyAnnotation == null) {
             return false;
         }
-
-        Supply supplyAnnotation = field.getAnnotation(Supply.class);
 
         PluginDescriptor descriptor = createDescriptor(supplyAnnotation);
         Optional<Plugin> dependencyResult = this.dependencyLocator.find(descriptor);

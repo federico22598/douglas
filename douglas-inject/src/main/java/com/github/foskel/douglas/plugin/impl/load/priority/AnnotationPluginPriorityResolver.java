@@ -1,5 +1,6 @@
 package com.github.foskel.douglas.plugin.impl.load.priority;
 
+import com.github.foskel.douglas.annotations.Priority;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriority;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
