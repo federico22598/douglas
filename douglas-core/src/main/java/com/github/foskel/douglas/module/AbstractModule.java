@@ -66,4 +66,9 @@ public abstract class AbstractModule implements Module {
 
         return Objects.equals(other.getName(), this.getName());
     }
+
+    @Override
+    public DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem() {
+        return this.dependencySystem;
+    }
 }
