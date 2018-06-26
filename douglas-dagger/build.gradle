@@ -13,5 +13,6 @@ repositories {
 dependencies {
     compile project(':douglas-inject')
     compile 'com.google.dagger:dagger:2.16'
+
     apt 'com.google.dagger:dagger-compiler:2.16'
 }

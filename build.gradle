@@ -1,7 +1,9 @@
-group 'com.github.foskel'
+group 'com.github.foskel.douglas'
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
 
     tasks.withType(JavaCompile) {
         sourceCompatibility = 1.8
@@ -9,7 +11,7 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    group 'com.github.foskel'
+    group 'com.github.foskel.douglas'
     version '0.2.0-RELEASE'
 
     repositories {
