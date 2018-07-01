@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
+/**
+ * @author Foskel
+ */
 public interface PluginRegistry {
     boolean register(PluginManifest manifest, Plugin plugin);
 

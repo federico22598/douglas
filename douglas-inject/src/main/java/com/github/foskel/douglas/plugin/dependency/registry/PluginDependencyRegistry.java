@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+/**
+ * @author Foskel
+ */
 public final class PluginDependencyRegistry implements DependencyRegistry<PluginManifest, Plugin> {
     private final Map<PluginManifest, Plugin> dependencies = new HashMap<>();
 

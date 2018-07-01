@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author Fred
+ * @author Foskel
  * @since 5/9/2017
  */
 public final class Version implements Comparable<Version> {

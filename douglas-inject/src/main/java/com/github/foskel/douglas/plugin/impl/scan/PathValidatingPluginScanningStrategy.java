@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author Foskel
+ */
 public final class PathValidatingPluginScanningStrategy implements PluginScanningStrategy {
     private final InstantiationStrategy<Plugin> instantiationStrategy;
     private final PluginManifestExtractor extractorService;

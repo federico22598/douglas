@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
+/**
+ * @author Foskel
+ */
 public final class StandardPluginRegistry implements PluginRegistry {
     private final Map<PluginManifest, Plugin> plugins;
     private final PluginLocatorService locatorService;

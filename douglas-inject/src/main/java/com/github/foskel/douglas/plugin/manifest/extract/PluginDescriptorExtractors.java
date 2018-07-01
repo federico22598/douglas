@@ -1,5 +1,8 @@
 package com.github.foskel.douglas.plugin.manifest.extract;
 
+/**
+ * @author Foskel
+ */
 public final class PluginDescriptorExtractors {
     private static final String STANDARD_CONFIGURATION_FILE_PATH = "META-INF/plugin.xml";
 

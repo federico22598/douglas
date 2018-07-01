@@ -7,8 +7,6 @@ import com.github.foskel.haptor.scan.ClassUnsatisfiedDependencyScanner;
 import java.util.Objects;
 
 /**
- * Abstract implementation of {@link Module}
- *
  * @author Fred
  * @since 2/21/2017
  */

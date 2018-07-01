@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public final class PluginScanningStrategyBuilder {
     private final List<PluginSourceValidator<Path>> pathValidators = new ArrayList<>();
     private InstantiationStrategy<Plugin> instantiationStrategy;

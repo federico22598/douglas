@@ -31,6 +31,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author Foskel
+ */
 public final class XMLPluginDescriptorParser implements PluginDescriptorParser {
     private static final String ROOT_ELEMENT_NAME = "plugin";
     private static final String MAIN_CLASS_ELEMENT_NAME = "main";

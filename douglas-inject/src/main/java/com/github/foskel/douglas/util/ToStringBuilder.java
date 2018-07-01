@@ -3,6 +3,9 @@ package com.github.foskel.douglas.util;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/**
+ * @author Foskel
+ */
 public final class ToStringBuilder {
     private static final String NULL_ATTRIBUTE = "null";
 

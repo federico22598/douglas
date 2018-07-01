@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * @author Foskel
+ */
 public final class PluginScanWorker {
     private final InstantiationStrategy<Plugin> instantiationStrategy;
     private final PluginManifestExtractor extractorService;

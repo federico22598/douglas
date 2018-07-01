@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * Synchronized implementation of {@link ModuleLocatorService}
+ * @author Foskel
  */
 public final class SynchronizedModuleLocator implements ModuleLocatorService {
     private final Supplier<Map<String, Module>> modulesSupplier;

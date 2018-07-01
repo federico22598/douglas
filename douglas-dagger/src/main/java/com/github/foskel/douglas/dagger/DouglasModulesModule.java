@@ -13,6 +13,11 @@ import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Provides Dagger bindings for the module system
+ *
+ * @author Foskel
+ */
 @Module
 public final class DouglasModulesModule {
 

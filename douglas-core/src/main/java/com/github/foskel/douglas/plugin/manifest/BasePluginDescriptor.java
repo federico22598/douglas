@@ -4,6 +4,9 @@ import com.github.foskel.douglas.core.version.Version;
 
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public final class BasePluginDescriptor implements PluginDescriptor {
     protected final String groupId;
     protected final String artifactId;

@@ -6,6 +6,9 @@ import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public final class SimplePluginScanResult implements PluginScanResult {
     private final PluginManifest descriptor;
     private final Plugin plugin;

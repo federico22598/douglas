@@ -4,6 +4,9 @@ import com.github.foskel.douglas.plugin.Plugin;
 
 import java.util.Collection;
 
+/**
+ * @author Foskel
+ */
 public interface PluginLoader {
     void load(Collection<Plugin> plugins);
 

@@ -11,9 +11,7 @@ import java.util.*;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 /**
- * Synchronized implementation of {@link ModuleManager}
- *
- * @author Fred
+ * @author Foskel
  * @since 4/9/2017
  */
 public final class SynchronizedModuleManager implements ModuleManager {

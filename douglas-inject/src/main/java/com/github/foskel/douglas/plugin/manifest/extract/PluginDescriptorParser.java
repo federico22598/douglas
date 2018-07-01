@@ -5,6 +5,9 @@ import com.github.foskel.douglas.plugin.manifest.extract.exception.PluginDescrip
 
 import java.net.URL;
 
+/**
+ * @author Foskel
+ */
 public interface PluginDescriptorParser {
     PluginManifest parse(URL dataFileURL) throws PluginDescriptorParsingException;
 }

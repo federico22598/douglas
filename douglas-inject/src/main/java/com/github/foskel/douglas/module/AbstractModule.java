@@ -7,12 +7,9 @@ import com.github.foskel.haptor.scan.ClassUnsatisfiedDependencyScanner;
 import java.util.Objects;
 
 /**
- * Abstract implementation of {@link Module}
- *
- * @author Fred
+ * @author Foskel
  * @since 2/21/2017
  */
-
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractModule implements Module {
     private final String name;

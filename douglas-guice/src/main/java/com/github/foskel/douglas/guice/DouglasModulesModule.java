@@ -13,6 +13,11 @@ import com.google.inject.Provides;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Provides Guice bindings for the module system
+ *
+ * @author Foskel
+ */
 public final class DouglasModulesModule extends AbstractModule {
 
     @Override

@@ -8,6 +8,9 @@ import org.w3c.dom.NodeList;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * @author Foskel
+ */
 public final class XmlContentRetriever {
     private XmlContentRetriever() {
     }

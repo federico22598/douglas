@@ -2,6 +2,9 @@ package com.github.foskel.douglas.util;
 
 import java.util.Optional;
 
+/**
+ * @author Foskel
+ */
 public final class Exceptions {
 
     @SuppressWarnings("unchecked")

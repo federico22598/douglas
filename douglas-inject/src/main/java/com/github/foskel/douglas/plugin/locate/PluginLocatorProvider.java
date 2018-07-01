@@ -5,6 +5,9 @@ import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 
 import java.util.Map;
 
+/**
+ * @author Foskel
+ */
 public interface PluginLocatorProvider {
     PluginLocatorService createPluginLocator(Map<PluginManifest, Plugin> plugins);
 }

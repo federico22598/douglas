@@ -11,6 +11,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 
+/**
+ * @author Foskel
+ */
 public final class XMLPluginManifestExtractor implements PluginManifestExtractor {
     private final DataFileURLExtractor<ClassLoader> dataFileURLExtractor;
     private final PluginDescriptorParser descriptorParser;

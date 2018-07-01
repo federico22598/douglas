@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Synchronized implementation of {@link ModuleLocatorService}
+ * @author Foskel
  */
 public final class SynchronizedModuleLocatorService implements ModuleLocatorService {
     private final Map<String, Module> modules;

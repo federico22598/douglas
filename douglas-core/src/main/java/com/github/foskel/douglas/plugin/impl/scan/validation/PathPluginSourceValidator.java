@@ -6,6 +6,9 @@ import com.github.foskel.douglas.plugin.scan.validation.PluginSourceValidator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * @author Foskel
+ */
 public enum PathPluginSourceValidator implements PluginSourceValidator<Path> {
     INSTANCE;
 

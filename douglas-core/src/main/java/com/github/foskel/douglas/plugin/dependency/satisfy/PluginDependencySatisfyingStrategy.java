@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @author Foskel
+ */
 public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy<PluginManifest, Plugin> {
     private final DependencyValidatorService validatorService;
 

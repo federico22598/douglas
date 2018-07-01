@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * @author Foskel
+ */
 public final class SimplePluginManifest implements PluginManifest {
     private final String mainClass;
     private final PluginDescriptor descriptor;

@@ -11,6 +11,12 @@ import com.github.foskel.douglas.plugin.manifest.extract.PluginDescriptorExtract
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractorBuilder;
 
+/**
+ * This class contains static factory methods to instantiate the main
+ * classes needed to setup the API with the default configuration
+ *
+ * @author Foskel
+ */
 @SuppressWarnings("WeakerAccess")
 public final class Douglas {
     private static final Version VERSION = Version.builder()

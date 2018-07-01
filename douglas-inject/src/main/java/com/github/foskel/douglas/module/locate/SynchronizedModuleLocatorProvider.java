@@ -4,6 +4,9 @@ import com.github.foskel.douglas.module.Module;
 
 import java.util.Map;
 
+/**
+ * @author Foskel
+ */
 public final class SynchronizedModuleLocatorProvider implements ModuleLocatorProvider {
 
     @Override

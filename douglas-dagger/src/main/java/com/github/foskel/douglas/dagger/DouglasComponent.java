@@ -7,12 +7,15 @@ import dagger.Component;
 
 import javax.inject.Singleton;
 
+/**
+ * Core component for API modules
+ *
+ * @author Foskel
+ */
 @Singleton
-@Component(modules = {PluginsModule.class, DouglasModulesModule.class})
-public interface SystemComponent {
+@Component(modules = {DouglasPluginsModule.class, DouglasModulesModule.class})
+public interface DouglasComponent {
     PluginManager pluginManager();
-
-    PluginRegistry pluginRegistry();
 
     ModuleManager moduleManager();
 

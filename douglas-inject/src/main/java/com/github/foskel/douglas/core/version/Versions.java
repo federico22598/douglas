@@ -4,6 +4,9 @@ import com.github.foskel.douglas.core.version.parse.StandardVersionParser;
 import com.github.foskel.douglas.core.version.parse.VersionParser;
 import com.github.foskel.douglas.core.version.parse.VersionParsingException;
 
+/**
+ * @author Foskel
+ */
 public final class Versions {
     private Versions() {
     }

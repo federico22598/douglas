@@ -2,6 +2,9 @@ package com.github.foskel.douglas.plugin.manifest;
 
 import java.util.Collection;
 
+/**
+ * @author Foskel
+ */
 public interface PluginManifest extends Comparable<PluginManifest> {
     String getMainClass();
 

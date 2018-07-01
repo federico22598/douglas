@@ -7,6 +7,9 @@ import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public enum AnnotationPluginPriorityResolver implements PluginPriorityResolver {
     INSTANCE;
 

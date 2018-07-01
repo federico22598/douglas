@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * @author Fred
+ * @author Foskel
  * @since 4/9/2017
  */
 public interface ModuleLocatorService {

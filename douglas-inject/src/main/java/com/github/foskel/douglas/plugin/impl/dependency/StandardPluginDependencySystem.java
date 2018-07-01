@@ -15,6 +15,9 @@ import com.github.foskel.haptor.validate.NullCheckingDependencyValidator;
 
 import java.util.*;
 
+/**
+ * @author Foskel
+ */
 public final class StandardPluginDependencySystem implements PluginDependencySystem {
     private final PluginDependencyRegistry registry;
     private final Set<DependencyProcessor> satisfyingProcessors;

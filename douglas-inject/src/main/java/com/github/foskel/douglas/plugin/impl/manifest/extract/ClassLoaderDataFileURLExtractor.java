@@ -5,6 +5,9 @@ import com.github.foskel.douglas.plugin.manifest.extract.exception.MissingPlugin
 
 import java.net.URL;
 
+/**
+ * @author Foskel
+ */
 public final class ClassLoaderDataFileURLExtractor implements DataFileURLExtractor<ClassLoader> {
 
     @Override

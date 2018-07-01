@@ -1,8 +1,8 @@
-package com.github.foskel.douglas.dagger;
+package com.github.foskel.douglas.guice;
 
 import com.github.foskel.douglas.Douglas;
+import com.github.foskel.douglas.instantiation.GuiceInstantiationStrategy;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
-import com.github.foskel.douglas.instantiation.ZeroArgumentInstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.impl.StandardPluginManager;
@@ -23,8 +23,9 @@ import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.douglas.plugin.resource.ResourceHandler;
 import com.github.foskel.douglas.plugin.scan.PluginScanningStrategy;
 import com.github.foskel.douglas.plugin.scan.validation.PluginSourceValidator;
-import dagger.Module;
-import dagger.Provides;
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 
 import javax.inject.Singleton;
 import java.nio.file.Path;
@@ -32,34 +33,36 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Module
-public final class PluginsModule {
+/**
+ * Provides Guice bindings for the module system
+ *
+ * @author Foskel
+ */
+public final class DouglasPluginsModule extends AbstractModule {
 
-    @Provides
-    @Singleton
-    static PluginManager providePluginManager(StandardPluginManager pluginManager) {
-        return pluginManager;
+    @Override
+    protected void configure() {
+        this.bind(PluginManager.class)
+                .to(StandardPluginManager.class)
+                .in(Singleton.class);
+
+        this.bind(PluginRegistry.class)
+                .to(StandardPluginRegistry.class)
+                .in(Singleton.class);
+
+        this.bind(PluginScanningStrategy.class).to(PathValidatingPluginScanningStrategy.class);
+        this.bind(PluginManifestExtractor.class).toInstance(Douglas.newPluginDescriptorExtractor());
+
+        this.bind(ResourceHandler.class).to(AnnotationResourceHandler.class);
+        this.bind(PluginPriorityResolver.class).to(AnnotationPluginPriorityResolver.class);
+
+        this.bind(PluginLoader.class).to(StandardPluginLoader.class);
+        this.bind(PluginLocatorProvider.class).to(SimplePluginLocatorProvider.class);
     }
 
     @Provides
-    @Singleton
-    static PluginRegistry providePluginRegistry(StandardPluginRegistry pluginRegistry) {
-        return pluginRegistry;
-    }
-
-    @Provides
-    static PluginScanningStrategy providePluginScanningStrategy(PathValidatingPluginScanningStrategy pluginScanningStrategy) {
-        return pluginScanningStrategy;
-    }
-
-    @Provides
-    static InstantiationStrategy<Plugin> providePluginInstantiationStrategy() {
-        return new ZeroArgumentInstantiationStrategy<>();
-    }
-
-    @Provides
-    static PluginManifestExtractor providePluginDescriptorExtractor() {
-        return Douglas.newPluginDescriptorExtractor();
+    static InstantiationStrategy<Plugin> providePluginInstantiationStrategy(Injector injector) {
+        return new GuiceInstantiationStrategy<>(injector);
     }
 
     @Provides
@@ -68,29 +71,9 @@ public final class PluginsModule {
     }
 
     @Provides
-    static ResourceHandler provideResourceHandler() {
-        return new AnnotationResourceHandler();
-    }
-
-    @Provides
-    static PluginPriorityResolver providePluginPriorityResolver() {
-        return new AnnotationPluginPriorityResolver();
-    }
-
-    @Provides
-    static PluginLoader providePluginLoader(StandardPluginLoader pluginLoader) {
-        return pluginLoader;
-    }
-
-    @Provides
     static Collection<PluginLoadingListener> provideLoadingListeners() {
         return Collections.singletonList(
                 new DependencySatisfyingPluginLoadingListener(
                         Collections.emptyList()));
-    }
-
-    @Provides
-    static PluginLocatorProvider providePluginLocatorServiceProvider() {
-        return new SimplePluginLocatorProvider();
     }
 }

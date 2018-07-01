@@ -10,6 +10,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 
+/**
+ * @author Foskel
+ */
 public final class AnnotationResourceHandler implements ResourceHandler {
 
     @Override

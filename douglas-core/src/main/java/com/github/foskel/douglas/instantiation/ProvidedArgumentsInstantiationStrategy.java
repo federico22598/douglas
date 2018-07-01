@@ -5,6 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+/**
+ * @author Foskel
+ */
 public final class ProvidedArgumentsInstantiationStrategy<T> implements InstantiationStrategy<T> {
     private final Object[] arguments;
     private final Object[] argumentTypes;

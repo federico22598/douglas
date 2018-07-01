@@ -6,12 +6,9 @@ import com.github.foskel.douglas.core.traits.Reloadable;
 import com.github.foskel.haptor.DependencySystem;
 
 /**
- * TODO: Stop making each Module have its own PropertyManager
- *
  * @author Fred
  * @since 4/4/2017
  */
-
 public interface Module extends Named, Loadable, Reloadable {
 
     @Override

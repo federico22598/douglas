@@ -5,6 +5,9 @@ import org.w3c.dom.NodeList;
 
 import java.util.AbstractList;
 
+/**
+ * @author Foskel
+ */
 public final class JavaListNodeListAdapter extends AbstractList<Node> {
     private final NodeList backingNodeList;
 

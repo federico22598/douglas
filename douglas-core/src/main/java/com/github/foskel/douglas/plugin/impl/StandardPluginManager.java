@@ -13,6 +13,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public final class StandardPluginManager implements PluginManager {
     private final PluginScanningStrategy scanningStrategy;
     private final PluginRegistry registry;

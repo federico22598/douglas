@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Foskel
+ */
 public final class PluginManifestBuilder {
     private final Set<PluginDescriptor> dependencyDescriptors;
     private final Set<String> resourceTargets;

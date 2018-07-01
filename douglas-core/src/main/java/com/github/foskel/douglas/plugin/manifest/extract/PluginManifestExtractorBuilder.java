@@ -4,6 +4,9 @@ import com.github.foskel.douglas.plugin.impl.manifest.extract.XMLPluginManifestE
 
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public final class PluginManifestExtractorBuilder {
     private DataFileURLExtractor<ClassLoader> dataFileURLExtractor;
     private PluginDescriptorParser pluginDescriptorParser;

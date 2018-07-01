@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * @author Foskel
+ */
 public final class FieldDependencySupplyingStrategy implements DependencySupplyingStrategy {
     private final PluginLocatorService dependencyLocator;
 

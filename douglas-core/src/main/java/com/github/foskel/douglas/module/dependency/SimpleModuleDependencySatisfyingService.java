@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * @author Foskel
+ */
 public final class SimpleModuleDependencySatisfyingService implements ModuleDependencySatisfyingService {
 
     private static boolean hasDependencies(Module module) {

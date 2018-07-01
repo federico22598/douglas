@@ -11,6 +11,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * This class is used to instantiate a class using a Guice injector
+ *
+ * @see com.google.inject.Injector#getInstance(Class)
+ * @param <T> the type of the class that will be instantiated
+ * @author Foskel
+ */
 public final class GuiceInstantiationStrategy<T> implements InstantiationStrategy<T> {
     private final Injector parentInjector;
     private final Set<Class<? extends Module>> moduleCache = new HashSet<>();

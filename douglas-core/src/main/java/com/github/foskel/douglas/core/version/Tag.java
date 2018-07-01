@@ -5,6 +5,9 @@ import com.github.foskel.douglas.core.traits.Named;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * @author Foskel
+ */
 public enum Tag implements Named {
     SNAPSHOT("SNAPSHOT"),
     RELEASE("RELEASE"),

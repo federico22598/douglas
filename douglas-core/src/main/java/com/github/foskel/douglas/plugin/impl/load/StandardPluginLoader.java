@@ -9,6 +9,9 @@ import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 import java.util.Collection;
 import java.util.Comparator;
 
+/**
+ * @author Foskel
+ */
 public enum StandardPluginLoader implements PluginLoader {
     INSTANCE;
 

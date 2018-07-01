@@ -5,6 +5,9 @@ import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
 import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
 
+/**
+ * @author Foskel
+ */
 public final class SupplyingDependencySatisfyingProcessor implements DependencyProcessor {
     private final DependencySupplyingStrategy supplyingStrategy;
     private final Object source;

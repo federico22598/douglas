@@ -3,6 +3,9 @@ package com.github.foskel.douglas.plugin.impl.scan;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+/**
+ * @author Foskel
+ */
 public final class URLPluginClassLoader extends URLClassLoader {
     URLPluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);

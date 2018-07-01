@@ -2,6 +2,9 @@ package com.github.foskel.douglas.plugin.manifest;
 
 import com.github.foskel.douglas.core.version.Version;
 
+/**
+ * @author Foskel
+ */
 public final class PluginDescriptorBuilder {
     private String groupId;
     private String artifactId;

@@ -3,6 +3,9 @@ package com.github.foskel.douglas.instantiation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @author Foskel
+ */
 public final class ZeroArgumentInstantiationStrategy<T> implements InstantiationStrategy<T> {
     private static final ZeroArgumentInstantiationStrategy<?> INSTANCE = new ZeroArgumentInstantiationStrategy<>();
 

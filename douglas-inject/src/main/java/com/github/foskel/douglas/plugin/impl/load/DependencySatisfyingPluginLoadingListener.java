@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Foskel
+ */
 public final class DependencySatisfyingPluginLoadingListener implements PluginLoadingListener {
     private final List<DependencyProcessor> satisfyingProcessors;
 

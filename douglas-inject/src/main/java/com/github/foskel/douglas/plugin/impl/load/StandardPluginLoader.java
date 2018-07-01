@@ -9,6 +9,9 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Comparator;
 
+/**
+ * @author Foskel
+ */
 public final class StandardPluginLoader implements PluginLoader {
     private final Comparator<Plugin> loadPriorityComparator;
     private final Comparator<Plugin> unloadPriorityComparator;

@@ -7,6 +7,9 @@ import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
 import java.util.Objects;
 
+/**
+ * @author Foskel
+ */
 public final class AnnotationPluginPriorityResolver implements PluginPriorityResolver {
     private static final PluginPriority DEFAULT_LOADING_PRIORITY = PluginPriority.NORMAL;
     private static final PluginPriority DEFAULT_UNLOADING_PRIORITY = PluginPriority.NORMAL;

@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * @author Fred
+ * @author Foskel
  * @since 3/24/2017
  */
 public interface ModuleManager {

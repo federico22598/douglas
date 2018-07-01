@@ -7,10 +7,9 @@ import java.util.Queue;
 import java.util.function.Consumer;
 
 /**
- * @author Fred
+ * @author Foskel
  * @since 2/2/2017
  */
-
 public abstract class ToggleableModule extends AbstractModule implements Toggleable {
     private final Queue<Consumer<ToggleableModule>> enableListeners = new ArrayDeque<>();
     private final Queue<Consumer<ToggleableModule>> disableListeners = new ArrayDeque<>();

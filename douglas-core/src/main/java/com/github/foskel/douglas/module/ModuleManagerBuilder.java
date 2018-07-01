@@ -4,6 +4,9 @@ import com.github.foskel.douglas.module.dependency.ModuleDependencySatisfyingSer
 
 import java.util.Map;
 
+/**
+ * @author Foskel
+ */
 public final class ModuleManagerBuilder {
     private final Map<String, Module> modules;
     private ModuleDependencySatisfyingService dependencySatisfier;

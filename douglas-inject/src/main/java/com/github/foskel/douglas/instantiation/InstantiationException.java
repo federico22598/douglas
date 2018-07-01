@@ -1,5 +1,8 @@
 package com.github.foskel.douglas.instantiation;
 
+/**
+ * @author Foskel
+ */
 public class InstantiationException extends ReflectiveOperationException {
     public InstantiationException(String message) {
         super(message);

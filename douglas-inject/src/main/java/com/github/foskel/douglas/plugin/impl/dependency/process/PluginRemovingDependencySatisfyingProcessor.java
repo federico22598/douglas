@@ -7,6 +7,9 @@ import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
 import com.github.foskel.haptor.satisfy.UnsatisfiedDependencyException;
 
+/**
+ * @author Foskel
+ */
 public final class PluginRemovingDependencySatisfyingProcessor implements DependencyProcessor {
     private final PluginRegistry pluginRegistry;
     private final PluginManifest ownerPluginInformation;
