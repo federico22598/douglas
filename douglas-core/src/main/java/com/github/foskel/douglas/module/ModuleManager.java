@@ -15,9 +15,9 @@ public interface ModuleManager {
         return new ModuleManagerBuilder(modules);
     }
 
-    void load(Path directory);
+    void load();
 
-    void unload(Path directory);
+    void unload();
 
     boolean register(Module module);
 

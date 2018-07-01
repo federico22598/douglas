@@ -22,7 +22,7 @@ public final class Douglas {
     private static final Version VERSION = Version.builder()
             .major(0)
             .minor(2)
-            .patch(1)
+            .patch(2)
             .addTag(Tag.RELEASE)
             .build();
 

@@ -11,9 +11,9 @@ import java.util.Map;
  * @since 3/24/2017
  */
 public interface ModuleManager {
-    void load(Path directory);
+    void load();
 
-    void unload(Path directory);
+    void unload();
 
     boolean register(Module module);
 

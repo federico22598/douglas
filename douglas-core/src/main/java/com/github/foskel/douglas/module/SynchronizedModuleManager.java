@@ -28,7 +28,7 @@ public final class SynchronizedModuleManager implements ModuleManager {
     }
 
     @Override
-    public void load(Path directory) {
+    public void load() {
         synchronized (this.modules) {
             this.modules.values().forEach(Module::load);
         }
@@ -37,9 +37,7 @@ public final class SynchronizedModuleManager implements ModuleManager {
     }
 
     @Override
-    public void unload(Path directory) {
-        Objects.requireNonNull(directory, "directory");
-
+    public void unload() {
         synchronized (this.modules) {
             this.modules.values().forEach(Module::unload);
             this.modules.clear();
