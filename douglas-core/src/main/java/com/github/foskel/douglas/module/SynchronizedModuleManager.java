@@ -4,7 +4,6 @@ import com.github.foskel.douglas.module.dependency.ModuleDependencySatisfyingSer
 import com.github.foskel.douglas.module.locate.ModuleLocatorService;
 import com.github.foskel.douglas.module.locate.SynchronizedModuleLocator;
 
-import java.nio.file.Path;
 import java.util.*;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
@@ -13,7 +12,7 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  * @author Fred
  * @since 4/9/2017
  */
-public final class SynchronizedModuleManager implements ModuleManager {
+public class SynchronizedModuleManager implements ModuleManager {
     private final Map<String, Module> modules;
     private final ModuleDependencySatisfyingService dependencySatisfier;
     private final ModuleLocatorService locator;

@@ -3,6 +3,7 @@ package com.github.foskel.douglas.plugin.impl.scan;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
+import com.github.foskel.douglas.util.ToStringBuilder;
 
 import java.util.Objects;
 
@@ -16,10 +17,6 @@ public final class SimplePluginScanResult implements PluginScanResult {
     public SimplePluginScanResult(PluginManifest descriptor, Plugin plugin) {
         this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
         this.plugin = Objects.requireNonNull(plugin, "plugin");
-    }
-
-    private static String identityToString(Object o) {
-        return o.getClass().getName() + "@" + Integer.toHexString(o.hashCode());
     }
 
     @Override
@@ -50,14 +47,10 @@ public final class SimplePluginScanResult implements PluginScanResult {
 
     @Override
     public String toString() {
-        return identityToString(this) + "{" +
-                (this.plugin == null
-                        ? "<null>"
-                        : identityToString(this.plugin) + "[" + this.plugin + "]") + "," +
-                (this.descriptor == null
-                        ? "<null>"
-                        : identityToString(this.descriptor) + "[" + this.descriptor + "]") +
-                "}";
+        return new ToStringBuilder(this)
+                .attribute(this.plugin)
+                .attribute(this.descriptor)
+                .build();
     }
 
     @Override

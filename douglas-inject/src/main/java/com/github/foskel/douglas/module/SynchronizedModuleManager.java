@@ -5,7 +5,6 @@ import com.github.foskel.douglas.module.locate.ModuleLocatorProvider;
 import com.github.foskel.douglas.module.locate.ModuleLocatorService;
 
 import javax.inject.Inject;
-import java.nio.file.Path;
 import java.util.*;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;

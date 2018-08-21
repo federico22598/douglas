@@ -20,15 +20,15 @@ import java.util.Map;
  */
 public final class DouglasModulesModule extends AbstractModule {
 
+    @Provides
+    static Map<String, Module> provideModules() {
+        return Collections.emptyMap();
+    }
+
     @Override
     protected void configure() {
         this.bind(ModuleManager.class).to(SynchronizedModuleManager.class);
         this.bind(ModuleLocatorProvider.class).to(SynchronizedModuleLocatorProvider.class);
         this.bind(ModuleDependencySatisfyingService.class).to(SimpleModuleDependencySatisfyingService.class);
-    }
-
-    @Provides
-    static Map<String, Module> provideModules() {
-        return Collections.emptyMap();
     }
 }

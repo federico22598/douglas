@@ -25,6 +25,10 @@ public final class ToStringBuilder {
         this.attributeBuilder = new StringBuilder();
     }
 
+    private static String identityToString(Object obj) {
+        return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
+    }
+
     public ToStringBuilder attribute(Object attribute) {
         this.attributeBuilder.setLength(0);
         this.attributes.add(this.attributeBuilder.append(attribute.getClass().getSimpleName())
@@ -64,9 +68,5 @@ public final class ToStringBuilder {
         return this.useIdentityToString
                 ? identityToString(obj)
                 : obj.toString();
-    }
-
-    private static String identityToString(Object obj) {
-        return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
     }
 }

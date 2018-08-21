@@ -23,6 +23,15 @@ public final class SimplePluginLocator implements PluginLocatorService {
         this.plugins = plugins;
     }
 
+    private static boolean matches(PluginDescriptor descriptor,
+                                   String groupId,
+                                   String artifactId,
+                                   String name) {
+        return descriptor.getGroupId().equals(groupId)
+                && descriptor.getArtifactId().equals(artifactId)
+                && descriptor.getName().equals(name);
+    }
+
     @Override
     public Optional<Plugin> find(PluginDescriptor descriptor) {
         Plugin result = null;
@@ -65,15 +74,6 @@ public final class SimplePluginLocator implements PluginLocatorService {
         }
 
         return Optional.ofNullable(result);
-    }
-
-    private static boolean matches(PluginDescriptor descriptor,
-                                   String groupId,
-                                   String artifactId,
-                                   String name) {
-        return descriptor.getGroupId().equals(groupId)
-                && descriptor.getArtifactId().equals(artifactId)
-                && descriptor.getName().equals(name);
     }
 
     @Override

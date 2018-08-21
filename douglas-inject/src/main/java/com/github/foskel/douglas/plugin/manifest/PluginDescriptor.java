@@ -10,6 +10,10 @@ import com.github.foskel.douglas.core.version.Version;
  */
 public interface PluginDescriptor extends Comparable<PluginDescriptor>, Named, Versioned, ArtifactDescriptor {
 
+    static PluginDescriptorBuilder builder() {
+        return new PluginDescriptorBuilder();
+    }
+
     @Override
     String getGroupId();
 
@@ -25,9 +29,5 @@ public interface PluginDescriptor extends Comparable<PluginDescriptor>, Named, V
     @Override
     default int compareTo(PluginDescriptor descriptor) {
         return this.getVersion().compareTo(descriptor.getVersion());
-    }
-
-    static PluginDescriptorBuilder builder() {
-        return new PluginDescriptorBuilder();
     }
 }

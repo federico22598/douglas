@@ -9,15 +9,15 @@ import java.lang.annotation.*;
  * priority. It should be declared on a plugin main class' type. For example:
  *
  * <code>
- *     @Priority({load = PluginPriority.FIRST, unload = PluginPriority.LAST})
- *     public class MyPlugin implements Plugin {
- *     ... methods ...
- *     }
- * </code>
- *
- * Here, MyPlugin will be the first plugin to load, and the last to unload.
  *
  * @author Foskel
+ * @Priority({load = PluginPriority.FIRST, unload = PluginPriority.LAST})
+ * public class MyPlugin implements Plugin {
+ * ... methods ...
+ * }
+ * </code>
+ * <p>
+ * Here, MyPlugin will be the first plugin to load, and the last to unload.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

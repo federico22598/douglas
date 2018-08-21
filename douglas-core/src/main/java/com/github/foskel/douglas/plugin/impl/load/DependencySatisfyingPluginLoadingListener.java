@@ -28,12 +28,13 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
         registry.findAllPlugins().forEach((descriptor, plugin) -> this.satisfyPluginDependencies(descriptor, plugin, registry));
     }
 
-    private void satisfyPluginDependencies(PluginManifest descriptor,
+    private void satisfyPluginDependencies(PluginManifest manifest,
                                            Plugin plugin,
                                            PluginRegistry registry) {
         PluginDependencySystem dependencySystem = plugin.getDependencySystem();
 
-        this.addDefaultProcessors(descriptor,
+        System.out.println("deps for " + manifest.getDescriptor().getName() + ":" + manifest.getDependencyDescriptors());
+        this.addDefaultProcessors(manifest,
                 plugin,
                 registry);
 

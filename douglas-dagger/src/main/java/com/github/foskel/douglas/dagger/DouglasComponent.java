@@ -2,7 +2,6 @@ package com.github.foskel.douglas.dagger;
 
 import com.github.foskel.douglas.module.ModuleManager;
 import com.github.foskel.douglas.plugin.PluginManager;
-import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import dagger.Component;
 
 import javax.inject.Singleton;

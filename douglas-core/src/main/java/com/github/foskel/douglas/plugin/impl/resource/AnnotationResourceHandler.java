@@ -15,29 +15,6 @@ import java.net.URL;
  */
 public final class AnnotationResourceHandler implements ResourceHandler {
 
-    @Override
-    public void handle(Class<?> type, ClassLoader classLoader) {
-        for (Field field : type.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-
-            try {
-                Object resource = getResource(type, classLoader, field);
-
-                if (resource != null) {
-                    field.set(null, resource);
-                }
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private static Object getResource(Class<?> type, ClassLoader classLoader, Field field) throws InvocationTargetException, IllegalAccessException {
         Resource annotation = field.getAnnotation(Resource.class);
 
@@ -105,5 +82,28 @@ public final class AnnotationResourceHandler implements ResourceHandler {
 
     private static URL getResourceAsURL(String path, ClassLoader classLoader) {
         return classLoader.getResource(path);
+    }
+
+    @Override
+    public void handle(Class<?> type, ClassLoader classLoader) {
+        for (Field field : type.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+
+            try {
+                Object resource = getResource(type, classLoader, field);
+
+                if (resource != null) {
+                    field.set(null, resource);
+                }
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -39,7 +39,7 @@ public abstract class AbstractModule implements Module {
     public DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem() {
         return this.dependencySystem;
     }
-    
+
     @Override
     public String toString() {
         return this.name;

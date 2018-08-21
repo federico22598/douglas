@@ -10,12 +10,15 @@ import com.github.foskel.douglas.plugin.scan.PluginScanFailedException;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 import com.github.foskel.douglas.util.Exceptions;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.lukehutch.fastclasspathscanner.scanner.ClassInfo;
+import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * TODO: Stop using lukehutch's FastClasspathScanner since only one plugin model class must be contained in a JAR file?
+ *
  * @author Foskel
  */
 public final class PluginScanWorker {
@@ -34,6 +37,10 @@ public final class PluginScanWorker {
         this.classLoader = classLoader;
     }
 
+    private static void registerDependencies(Plugin plugin, PluginManifest manifest) {
+        plugin.getDependencySystem().register(manifest);
+    }
+
     public PluginScanResult scan(Path file) throws PluginScanFailedException {
         PluginManifest manifest;
 
@@ -43,21 +50,26 @@ public final class PluginScanWorker {
             throw new PluginScanFailedException("Unable to scan '" + file + "':", e);
         }
 
-        String mainClass = manifest.getMainClass();
-        AtomicReference<Plugin> pluginHolder = new AtomicReference<>();
-
-        new FastClasspathScanner(mainClass)
-                .addClassLoader(this.classLoader)
-                .matchClassesImplementing(Plugin.class, type -> {
-                    this.handleResources(manifest, type);
-                    pluginHolder.set(this.instantiate(type));
-                })
+        String mainClassCanonical = manifest.getMainClass();
+        ScanResult result = new FastClasspathScanner(mainClassCanonical)
+                .disableRecursiveScanning()
+                .overrideClassLoaders(this.classLoader)
                 .scan();
 
-        Plugin plugin = pluginHolder.get();
+        Plugin plugin = null;
+
+        for (ClassInfo info : result.getClassNameToClassInfo().values()) {
+            Class<?> type = info.getClassRef();
+
+            if (isPlugin(type, mainClassCanonical)) {
+                this.handleResources(manifest, type);
+
+                plugin = this.instantiate(type);
+            }
+        }
 
         if (plugin == null) {
-            throw new PluginScanFailedException("Unable to find a valid plugin class which name matches \"" + mainClass + "\"");
+            throw new PluginScanFailedException("Unable to find a valid plugin class which name matches \"" + mainClassCanonical + "\"");
         }
 
         registerDependencies(plugin, manifest);
@@ -65,12 +77,11 @@ public final class PluginScanWorker {
         return new SimplePluginScanResult(manifest, plugin);
     }
 
-    private static void registerDependencies(Plugin plugin, PluginManifest descriptor) {
-        plugin.getDependencySystem().register(descriptor);
+    private static boolean isPlugin(Class<?> type, String requiredName) {
+        return Plugin.class.isAssignableFrom(type) && type.getCanonicalName().equals(requiredName);
     }
 
-    private void handleResources(PluginManifest descriptor,
-                                 Class<?> type) {
+    private void handleResources(PluginManifest descriptor, Class<?> type) {
         if (descriptor.getResources().contains(type.getCanonicalName())) {
             this.resourceHandler.handle(type, this.classLoader);
         }

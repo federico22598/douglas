@@ -23,14 +23,13 @@ public final class PluginRemovingDependencySatisfyingProcessor implements Depend
     @Override
     public void postSatisfy(DependencySatisfyingResult result) throws UnsatisfiedDependencyException {
         if (!result.getValidationResult()) {
-            PluginManifest dependencyIdentifier = (PluginManifest) result.getDependencyIdentifier();
-            PluginDescriptor descriptor = dependencyIdentifier.getDescriptor();
-
             this.pluginRegistry.unregister(this.ownerPluginInformation);
+
+            PluginManifest dependencyIdentifier = (PluginManifest) result.getDependencyIdentifier();
 
             throw new UnsatisfiedDependencyException(
                     String.format("Unable to satisfy plugin dependency with name \"%s\" from \"%s\"",
-                            descriptor.getName(),
+                            dependencyIdentifier.getDescriptor().getName(),
                             this.ownerPluginInformation.getDescriptor().getName()));
         }
     }

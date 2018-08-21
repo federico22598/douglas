@@ -48,6 +48,10 @@ public final class Version implements Comparable<Version> {
                 Collections.emptyList());
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     private void validate(int majorVersion,
                           int minorVersion,
                           int patchVersion,
@@ -147,10 +151,6 @@ public final class Version implements Comparable<Version> {
         }
 
         return result;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static class Builder {

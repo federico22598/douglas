@@ -1,26 +1,16 @@
 package com.github.foskel.douglas.util;
 
-import java.util.Optional;
-
 /**
  * @author Foskel
  */
 public final class Exceptions {
 
     @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void throwAsUnchecked(Throwable exception, Object dummy) throws T {
-        throw (T) exception;
+    private static <T extends Throwable> void castAndThrow(Throwable throwable) throws T {
+        throw (T) throwable;
     }
 
     public static void throwAsUnchecked(Throwable throwable) {
-        throwAsUnchecked(throwable, null);
-    }
-
-    public static <T> T getOrThrowAsUnchecked(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<T> target, Throwable throwable) {
-        if (!target.isPresent()) {
-            throwAsUnchecked(throwable);
-        }
-
-        return target.get();
+        castAndThrow(throwable);
     }
 }

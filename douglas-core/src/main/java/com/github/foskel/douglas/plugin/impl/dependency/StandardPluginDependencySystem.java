@@ -81,19 +81,6 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
             candidateDependency.ifPresent(dependency -> dependencies.put(manifest, dependency));
         });
 
-        /*
-        //https://stackoverflow.com/questions/174093/toarraynew-myclass0-or-toarraynew-myclassmylist-size
-        @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
-        PluginManifest[] unsatisfiedDependenciesArray = unsatisfiedDependencies.toArray(new PluginManifest[unsatisfiedDependencies.size()]);
-
-        for (int i = 0; i < unsatisfiedDependenciesArray.length; i++) {
-            PluginManifest manifest = unsatisfiedDependenciesArray[i];
-            Optional<Plugin> candidateDependency = this.locator.find(manifest);
-
-            candidateDependency.ifPresent(dependency -> dependencies.put(manifest, dependency));
-        }
-        */
-
         this.satisfy(dependencies);
     }
 

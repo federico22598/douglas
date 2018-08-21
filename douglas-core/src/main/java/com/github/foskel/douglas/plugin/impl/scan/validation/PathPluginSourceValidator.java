@@ -12,16 +12,15 @@ import java.nio.file.Path;
 public enum PathPluginSourceValidator implements PluginSourceValidator<Path> {
     INSTANCE;
 
+
     @Override
     public void validate(Path path) throws PluginSourceValidatingException {
         if (path == null) {
             throw new PluginSourceValidatingException("The Path cannot be null!");
         } else if (!Files.isDirectory(path)) {
-            String fileName = path
+            throw new PluginSourceValidatingException("The provided Path (" + path
                     .getFileName()
-                    .toString();
-
-            throw new PluginSourceValidatingException("The provided Path (" + fileName + ") is not a directory");
+                    .toString() + ") is not a directory");
         }
     }
 }

@@ -12,10 +12,8 @@ import com.github.foskel.douglas.plugin.scan.validation.PluginSourceValidator;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +22,9 @@ import java.util.stream.Collectors;
 /**
  * @author Foskel
  */
-public final class PathValidatingPluginScanningStrategy implements PluginScanningStrategy {
+public class PathValidatingPluginScanningStrategy implements PluginScanningStrategy {
+    private static final String REQUIRED_FILE_EXTENSION = ".jar";
+
     private final InstantiationStrategy<Plugin> instantiationStrategy;
     private final PluginManifestExtractor extractorService;
     private final List<PluginSourceValidator<Path>> pathValidators;
@@ -43,36 +43,7 @@ public final class PathValidatingPluginScanningStrategy implements PluginScannin
     private static boolean shouldLoadFile(Path file) {
         String fileName = file.getFileName().toString();
 
-        return Files.isRegularFile(file) && fileName.endsWith(".jar");
-    }
-
-    private static void addFileURLTo(URLPluginClassLoader parentClassLoader,
-                                     Path file) {
-        try {
-            parentClassLoader.addURL(file.toUri().toURL());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static ClassLoader getClassLoaderFromFile(URLClassLoader parent,
-                                                      Path file) {
-        URL fileURL = Arrays.stream(parent.getURLs())
-                .filter(url -> {
-                    try {
-                        return url.equals(file.toUri().toURL());
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-
-                    return false;
-                })
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("The URLClassLoader " +
-                        "\"" + parent.getClass().getSimpleName() + "\" does not contain " +
-                        "any URL(s) for the Path \"" + file.getFileName().toString() + "\""));
-
-        return new URLClassLoader(new URL[]{fileURL}, parent);
+        return Files.isRegularFile(file) && fileName.endsWith(REQUIRED_FILE_EXTENSION);
     }
 
     @Override
@@ -80,14 +51,11 @@ public final class PathValidatingPluginScanningStrategy implements PluginScannin
         this.validatePath(directory);
 
         List<PluginScanResult> scanResults;
-        URLPluginClassLoader directoryClassLoader = new URLPluginClassLoader(
-                PathValidatingPluginScanningStrategy.class.getClassLoader());
 
         try {
             scanResults = Files.walk(directory)
                     .filter(PathValidatingPluginScanningStrategy::shouldLoadFile)
-                    .peek(file -> addFileURLTo(directoryClassLoader, file))
-                    .map(file -> this.scanSingle(file, directoryClassLoader))
+                    .map(this::scanSingle)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             String directoryFileName = directory.getFileName().toString();
@@ -102,24 +70,15 @@ public final class PathValidatingPluginScanningStrategy implements PluginScannin
 
     @Override
     public PluginScanResult scanSingle(Path file) {
+        ClassLoader parentClassLoader = PathValidatingPluginScanningStrategy.class.getClassLoader();
         ClassLoader fileClassLoader;
 
         try {
-            fileClassLoader = new URLClassLoader(new URL[]{file.toUri().toURL()});
+            fileClassLoader = new URLPluginClassLoader(new URL[]{file.toUri().toURL()}, parentClassLoader);
         } catch (MalformedURLException e) {
             throw new PluginScanFailedException("Unable to scan plugin JAR file " + file + ":", e);
         }
 
-        PluginScanWorker scanWorker = new PluginScanWorker(this.instantiationStrategy,
-                this.extractorService,
-                this.resourceHandler,
-                fileClassLoader);
-
-        return scanWorker.scan(file);
-    }
-
-    private PluginScanResult scanSingle(Path file, URLClassLoader classLoader) {
-        ClassLoader fileClassLoader = getClassLoaderFromFile(classLoader, file);
         PluginScanWorker scanWorker = new PluginScanWorker(this.instantiationStrategy,
                 this.extractorService,
                 this.resourceHandler,

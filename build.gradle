@@ -1,18 +1,14 @@
-group 'com.github.foskel.douglas'
-
 subprojects {
+    group 'com.github.foskel.douglas'
+    version '0.2.2-RELEASE'
+
     apply plugin: 'java'
-    apply plugin: 'maven'
-    apply plugin: 'signing'
 
     tasks.withType(JavaCompile) {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
         options.encoding = 'UTF-8'
     }
-
-    group 'com.github.foskel.douglas'
-    version '0.2.1-RELEASE'
 
     repositories {
         maven {
@@ -25,14 +21,6 @@ subprojects {
     dependencies {
         compile 'com.google.code.gson:gson:2.8.4'
         compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
-        compile 'com.github.foskel:haptor:-SNAPSHOT'
-    }
-
-    jar {
-        from {
-            (configurations.runtime).collect {
-                it.isDirectory() ? it : zipTree(it)
-            }
-        }
+        compile 'com.github.foskel:haptor:master-SNAPSHOT'
     }
 }

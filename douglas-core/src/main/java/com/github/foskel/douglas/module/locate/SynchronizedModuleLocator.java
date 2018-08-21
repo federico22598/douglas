@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * @author Foskel
  */
-public final class SynchronizedModuleLocator implements ModuleLocatorService {
+public class SynchronizedModuleLocator implements ModuleLocatorService {
     private final Supplier<Map<String, Module>> modulesSupplier;
 
     public SynchronizedModuleLocator(Supplier<Map<String, Module>> modulesSupplier) {

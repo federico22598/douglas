@@ -47,37 +47,6 @@ public final class XMLPluginDescriptorParser implements PluginDescriptorParser {
     private static final String DEPENDENCIES_ELEMENT_NAME = "dependencies";
     private static final String DEPENDENCIES_DEPENDENCY_ELEMENT_NAME = "dependency";
 
-    @Override
-    public PluginManifest parse(URL dataFileURL) throws PluginDescriptorParsingException {
-        Document document = parseDocument(dataFileURL);
-        Element rootElement = extractRootElement(document, dataFileURL);
-
-        rootElement.normalize();
-
-        JavaListNodeListAdapter artifactDescriptorNodes = new JavaListNodeListAdapter(
-                document.getElementsByTagName(HEADER_ARTIFACT_DESCRIPTOR_ELEMENT_NAME));
-        PluginManifestBuilder descriptorBuilder = extractManifest(
-                artifactDescriptorNodes,
-                dataFileURL);
-
-        String mainClassName = extractMainClass(document, dataFileURL);
-        NodeList resourceTargetNodes = document.getElementsByTagName(RESOURCE_TARGETS_ELEMENT_NAME);
-        List<String> resourceTargets = extractResourceTargets(
-                new JavaListNodeListAdapter(resourceTargetNodes));
-
-        NodeList dependencyNodes = document.getElementsByTagName(DEPENDENCIES_ELEMENT_NAME);
-        List<PluginDescriptor> dependencyDescriptors = extractDependencyDescriptors(
-                new JavaListNodeListAdapter(dependencyNodes),
-                dataFileURL);
-
-        return descriptorBuilder
-                .withClassName(mainClassName)
-                .addDependencyDescriptors(dependencyDescriptors)
-                .addResourceTargets(resourceTargets)
-
-                .build();
-    }
-
     private static Document parseDocument(URL url) throws PluginDescriptorParsingException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder;
@@ -278,5 +247,36 @@ public final class XMLPluginDescriptorParser implements PluginDescriptorParser {
         return textNodeResult.orElseThrow(() -> new MissingPluginDataContentException(
                 "Missing required node (" + name + ") from plugin data file element " +
                         "\"" + element.toString() + "\"."));
+    }
+
+    @Override
+    public PluginManifest parse(URL dataFileURL) throws PluginDescriptorParsingException {
+        Document document = parseDocument(dataFileURL);
+        Element rootElement = extractRootElement(document, dataFileURL);
+
+        rootElement.normalize();
+
+        JavaListNodeListAdapter artifactDescriptorNodes = new JavaListNodeListAdapter(
+                document.getElementsByTagName(HEADER_ARTIFACT_DESCRIPTOR_ELEMENT_NAME));
+        PluginManifestBuilder descriptorBuilder = extractManifest(
+                artifactDescriptorNodes,
+                dataFileURL);
+
+        String mainClassName = extractMainClass(document, dataFileURL);
+        NodeList resourceTargetNodes = document.getElementsByTagName(RESOURCE_TARGETS_ELEMENT_NAME);
+        List<String> resourceTargets = extractResourceTargets(
+                new JavaListNodeListAdapter(resourceTargetNodes));
+
+        NodeList dependencyNodes = document.getElementsByTagName(DEPENDENCIES_ELEMENT_NAME);
+        List<PluginDescriptor> dependencyDescriptors = extractDependencyDescriptors(
+                new JavaListNodeListAdapter(dependencyNodes),
+                dataFileURL);
+
+        return descriptorBuilder
+                .withClassName(mainClassName)
+                .addDependencyDescriptors(dependencyDescriptors)
+                .addResourceTargets(resourceTargets)
+
+                .build();
     }
 }

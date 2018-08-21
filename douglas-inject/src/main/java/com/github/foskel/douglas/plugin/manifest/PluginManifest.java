@@ -6,6 +6,10 @@ import java.util.Collection;
  * @author Foskel
  */
 public interface PluginManifest extends Comparable<PluginManifest> {
+    static PluginManifestBuilder builder() {
+        return new PluginManifestBuilder();
+    }
+
     String getMainClass();
 
     PluginDescriptor getDescriptor();
@@ -17,9 +21,5 @@ public interface PluginManifest extends Comparable<PluginManifest> {
     @Override
     default int compareTo(PluginManifest o) {
         return this.getDescriptor().compareTo(o.getDescriptor());
-    }
-
-    static PluginManifestBuilder builder() {
-        return new PluginManifestBuilder();
     }
 }

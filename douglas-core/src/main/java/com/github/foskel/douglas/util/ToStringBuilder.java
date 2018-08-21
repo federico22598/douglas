@@ -2,12 +2,15 @@ package com.github.foskel.douglas.util;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 /**
  * @author Foskel
  */
 public final class ToStringBuilder {
     private static final String NULL_ATTRIBUTE = "null";
+    private static final String ATTRIBUTE_VALUE_SEPARATOR = "=";
+    private static final String ATTRIBUTE_SEPARATOR = ",";
 
     private final Object source;
     private final boolean useIdentityToString;
@@ -25,10 +28,14 @@ public final class ToStringBuilder {
         this.attributeBuilder = new StringBuilder();
     }
 
+    private static String identityToString(Object obj) {
+        return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
+    }
+
     public ToStringBuilder attribute(Object attribute) {
         this.attributeBuilder.setLength(0);
         this.attributes.add(this.attributeBuilder.append(attribute.getClass().getSimpleName())
-                .append("=")
+                .append(ATTRIBUTE_VALUE_SEPARATOR)
                 .append(this.toString(attribute))
                 .toString());
 
@@ -37,7 +44,9 @@ public final class ToStringBuilder {
 
     public String build() {
         StringBuilder resultBuilder = new StringBuilder();
-        String start = this.useIdentityToString ? identityToString(this.source) : this.source.getClass().getSimpleName();
+        String start = this.useIdentityToString
+                ? identityToString(this.source)
+                : this.source.getClass().getSimpleName();
 
         resultBuilder.append(start).append("{");
 
@@ -46,8 +55,8 @@ public final class ToStringBuilder {
 
             resultBuilder.append(attribute);
 
-            if (!attribute.equals(this.attributes.getLast())) {
-                resultBuilder.append(",");
+            if (!Objects.equals(attribute, this.attributes.peekLast())) {//peekLast will not throw NoSuchElementException if the last element is absent
+                resultBuilder.append(ATTRIBUTE_SEPARATOR);
             }
         }
 
@@ -64,9 +73,5 @@ public final class ToStringBuilder {
         return this.useIdentityToString
                 ? identityToString(obj)
                 : obj.toString();
-    }
-
-    private static String identityToString(Object obj) {
-        return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
     }
 }

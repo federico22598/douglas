@@ -40,6 +40,23 @@ import java.util.List;
  */
 public final class DouglasPluginsModule extends AbstractModule {
 
+    @Provides
+    static InstantiationStrategy<Plugin> providePluginInstantiationStrategy(Injector injector) {
+        return new GuiceInstantiationStrategy<>(injector);
+    }
+
+    @Provides
+    static List<PluginSourceValidator<Path>> providePluginSourceValidators() {
+        return Collections.singletonList(new PathPluginSourceValidator());
+    }
+
+    @Provides
+    static Collection<PluginLoadingListener> provideLoadingListeners() {
+        return Collections.singletonList(
+                new DependencySatisfyingPluginLoadingListener(
+                        Collections.emptyList()));
+    }
+
     @Override
     protected void configure() {
         this.bind(PluginManager.class)
@@ -58,22 +75,5 @@ public final class DouglasPluginsModule extends AbstractModule {
 
         this.bind(PluginLoader.class).to(StandardPluginLoader.class);
         this.bind(PluginLocatorProvider.class).to(SimplePluginLocatorProvider.class);
-    }
-
-    @Provides
-    static InstantiationStrategy<Plugin> providePluginInstantiationStrategy(Injector injector) {
-        return new GuiceInstantiationStrategy<>(injector);
-    }
-
-    @Provides
-    static List<PluginSourceValidator<Path>> providePluginSourceValidators() {
-        return Collections.singletonList(new PathPluginSourceValidator());
-    }
-
-    @Provides
-    static Collection<PluginLoadingListener> provideLoadingListeners() {
-        return Collections.singletonList(
-                new DependencySatisfyingPluginLoadingListener(
-                        Collections.emptyList()));
     }
 }

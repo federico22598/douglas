@@ -2,9 +2,7 @@ package com.github.foskel.douglas.plugin;
 
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 
-import java.lang.reflect.Array;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 /**
  * This class should be used to handle basic loading and unloading of plugins.

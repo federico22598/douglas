@@ -14,9 +14,9 @@ import java.util.stream.StreamSupport;
 /**
  * This class is used to instantiate a class using a Guice injector
  *
- * @see com.google.inject.Injector#getInstance(Class)
  * @param <T> the type of the class that will be instantiated
  * @author Foskel
+ * @see com.google.inject.Injector#getInstance(Class)
  */
 public final class GuiceInstantiationStrategy<T> implements InstantiationStrategy<T> {
     private final Injector parentInjector;
@@ -24,6 +24,16 @@ public final class GuiceInstantiationStrategy<T> implements InstantiationStrateg
 
     public GuiceInstantiationStrategy(Injector parentInjector) {
         this.parentInjector = parentInjector;
+    }
+
+    private static <T> Stream<T> stream(Iterable<T> iterable) {
+        if (iterable instanceof Collection) {
+            Collection<T> collection = (Collection<T>) iterable;
+
+            return collection.stream();
+        }
+
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 
     @Override
@@ -55,15 +65,5 @@ public final class GuiceInstantiationStrategy<T> implements InstantiationStrateg
         }
 
         return this.parentInjector.createChildInjector(moduleServiceLoader);
-    }
-
-    private static <T> Stream<T> stream(Iterable<T> iterable) {
-        if (iterable instanceof Collection) {
-            Collection<T> collection = (Collection<T>) iterable;
-
-            return collection.stream();
-        }
-
-        return StreamSupport.stream(iterable.spliterator(), false);
     }
 }

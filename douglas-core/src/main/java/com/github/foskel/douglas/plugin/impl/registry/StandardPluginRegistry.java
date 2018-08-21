@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 /**
  * @author Foskel
  */
-public final class StandardPluginRegistry implements PluginRegistry {
+public class StandardPluginRegistry implements PluginRegistry {
     private final Map<PluginManifest, Plugin> plugins;
     private final PluginLocatorService locatorService;
 

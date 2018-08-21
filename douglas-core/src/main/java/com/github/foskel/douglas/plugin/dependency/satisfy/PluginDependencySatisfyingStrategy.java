@@ -62,33 +62,4 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
 
         return results;
     }
-
-    private DependencySatisfyingResult satisfy(PluginManifest dependencyIdentifier,
-                                               Plugin dependency,
-                                               DependencyRegistry<PluginManifest, Plugin> registry,
-                                               Set<DependencyProcessor> processors) {
-        if (dependency != null) {
-            if (registry.has(dependencyIdentifier)) {
-                registry.registerDirectly(dependencyIdentifier, dependency);
-            }
-
-            boolean validatingResult = this.validatorService.validate(dependency);
-
-            DependencySatisfyingResult<PluginManifest, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
-                    dependency,
-                    validatingResult);
-
-            processors.forEach(processor -> {
-                try {
-                    processor.postSatisfy(result);
-                } catch (UnsatisfiedDependencyException exception) {
-                    exception.printStackTrace();
-                }
-            });
-
-            return result;
-        }
-
-        return null;
-    }
 }

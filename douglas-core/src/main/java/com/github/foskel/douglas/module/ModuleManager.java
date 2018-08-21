@@ -2,7 +2,6 @@ package com.github.foskel.douglas.module;
 
 import com.github.foskel.douglas.module.locate.ModuleLocatorService;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 

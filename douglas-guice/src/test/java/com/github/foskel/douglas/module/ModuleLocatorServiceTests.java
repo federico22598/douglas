@@ -18,6 +18,10 @@ public final class ModuleLocatorServiceTests {
     private final TestModule testModule = new TestModule();
     private ModuleLocatorService moduleLocator;
 
+    private static Injector createGuiceInjector() {
+        return Guice.createInjector(new DouglasModulesModule());
+    }
+
     @Before
     public void createModuleLocator() {
         Injector injector = createGuiceInjector();
@@ -25,10 +29,6 @@ public final class ModuleLocatorServiceTests {
 
         this.moduleLocator = locatorProvider.create(
                 Collections.singletonMap(this.testModule.getName(), this.testModule));
-    }
-
-    private static Injector createGuiceInjector() {
-        return Guice.createInjector(new DouglasModulesModule());
     }
 
     @Test

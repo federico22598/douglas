@@ -25,9 +25,9 @@ public final class StandardPluginManager implements PluginManager {
 
     @Inject
     StandardPluginManager(PluginScanningStrategy scanningStrategy,
-                                 PluginRegistry registry,
-                                 PluginLoader loader,
-                                 Collection<PluginLoadingListener> loadingListeners) {
+                          PluginRegistry registry,
+                          PluginLoader loader,
+                          Collection<PluginLoadingListener> loadingListeners) {
         this.scanningStrategy = scanningStrategy;
         this.registry = registry;
         this.loader = loader;

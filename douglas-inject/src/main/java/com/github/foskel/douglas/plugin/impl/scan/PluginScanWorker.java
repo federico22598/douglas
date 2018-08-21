@@ -34,6 +34,10 @@ public final class PluginScanWorker {
         this.classLoader = classLoader;
     }
 
+    private static void registerDependencies(Plugin plugin, PluginManifest descriptor) {
+        plugin.getDependencySystem().register(descriptor);
+    }
+
     public PluginScanResult scan(Path file) throws PluginScanFailedException {
         PluginManifest manifest;
 
@@ -63,10 +67,6 @@ public final class PluginScanWorker {
         registerDependencies(plugin, manifest);
 
         return new SimplePluginScanResult(manifest, plugin);
-    }
-
-    private static void registerDependencies(Plugin plugin, PluginManifest descriptor) {
-        plugin.getDependencySystem().register(descriptor);
     }
 
     private void handleResources(PluginManifest descriptor,
