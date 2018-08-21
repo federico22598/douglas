@@ -17,8 +17,7 @@ public class SynchronizedModuleManager implements ModuleManager {
     private final ModuleDependencySatisfyingService dependencySatisfier;
     private final ModuleLocatorService locator;
 
-    public SynchronizedModuleManager(Map<String, Module> modules,
-                                     ModuleDependencySatisfyingService dependencySatisfier) {
+    public SynchronizedModuleManager(Map<String, Module> modules, ModuleDependencySatisfyingService dependencySatisfier) {
         this.modules = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         this.modules.putAll(modules);
 
