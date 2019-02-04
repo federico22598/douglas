@@ -26,5 +26,6 @@ public interface Module extends Named, Loadable, Reloadable {
         this.load();
     }
 
+    //TODO
     DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem();
 }
