@@ -19,7 +19,7 @@ public final class ModuleLocatorServiceTests {
     private ModuleLocatorService moduleLocator;
 
     private static Injector createGuiceInjector() {
-        return Guice.createInjector(new DouglasModulesModule(initialModules));
+        return Guice.createInjector(new DouglasModulesModule());
     }
 
     @Before
