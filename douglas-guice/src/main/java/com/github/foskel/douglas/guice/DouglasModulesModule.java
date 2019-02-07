@@ -50,7 +50,7 @@ public final class DouglasModulesModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        this.bind(ModuleManager.class).to(SynchronizedModuleManager.class);
+        this.bind(ModuleManager.class).to(SynchronizedModuleManager.class).in(Singleton.class);
         this.bind(ModuleLocatorProvider.class).to(SynchronizedModuleLocatorProvider.class);
         this.bind(ModuleDependencySatisfyingService.class).to(SimpleModuleDependencySatisfyingService.class);
     }
