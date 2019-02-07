@@ -1,6 +1,7 @@
 package com.github.foskel.douglas.plugin.dependency.registry;
 
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.haptor.registry.DependencyRegistry;
 import com.github.foskel.haptor.scan.UnsatisfiedDependencyScanner;
@@ -14,12 +15,12 @@ import java.util.function.Predicate;
 /**
  * @author Foskel
  */
-public final class PluginDependencyRegistry implements DependencyRegistry<PluginManifest, Plugin> {
-    private final Map<PluginManifest, Plugin> dependencies = new HashMap<>();
+public final class PluginDependencyRegistry implements DependencyRegistry<PluginDescriptor, Plugin> {
+    private final Map<PluginDescriptor, Plugin> dependencies = new HashMap<>();
 
     @Override
-    public boolean register(Object source, UnsatisfiedDependencyScanner<PluginManifest> scanningStrategy) {
-        Collection<PluginManifest> scanResults = scanningStrategy.scan(source);
+    public boolean register(Object source, UnsatisfiedDependencyScanner<PluginDescriptor> scanningStrategy) {
+        Collection<PluginDescriptor> scanResults = scanningStrategy.scan(source);
 
         if (scanResults.isEmpty()) {
             return false;
@@ -30,14 +31,14 @@ public final class PluginDependencyRegistry implements DependencyRegistry<Plugin
         return true;
     }
 
-    private void registerUnsatisfied(PluginManifest descriptor) {
+    private void registerUnsatisfied(PluginDescriptor descriptor) {
         if (!this.dependencies.containsKey(descriptor)) {
             this.dependencies.put(descriptor, null);
         }
     }
 
     @Override
-    public boolean registerDirectly(PluginManifest descriptor, Plugin dependency) {
+    public boolean registerDirectly(PluginDescriptor descriptor, Plugin dependency) {
         this.dependencies.put(descriptor, dependency);
 
         return true;
@@ -49,7 +50,7 @@ public final class PluginDependencyRegistry implements DependencyRegistry<Plugin
     }
 
     @Override
-    public boolean unregisterDirectly(PluginManifest descriptor) {
+    public boolean unregisterDirectly(PluginDescriptor descriptor) {
         if (this.dependencies.containsKey(descriptor)) {
             this.dependencies.remove(descriptor);
 
@@ -60,17 +61,17 @@ public final class PluginDependencyRegistry implements DependencyRegistry<Plugin
     }
 
     @Override
-    public boolean unregisterIf(Predicate<PluginManifest> condition) {
+    public boolean unregisterIf(Predicate<PluginDescriptor> condition) {
         return this.dependencies.keySet().removeIf(condition);
     }
 
     @Override
-    public boolean has(PluginManifest identifier) {
+    public boolean has(PluginDescriptor identifier) {
         return this.dependencies.containsKey(identifier);
     }
 
     @Override
-    public Map<PluginManifest, Plugin> findAllDependencies() {
+    public Map<PluginDescriptor, Plugin> findAllDependencies() {
         return Collections.unmodifiableMap(this.dependencies);
     }
 

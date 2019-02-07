@@ -5,6 +5,7 @@ import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -17,10 +18,20 @@ import java.util.stream.Collectors;
 public final class SimplePluginLocator implements PluginLocatorService {
     private static final String LATEST_VERSION = "<latest>";
 
-    private final Map<PluginManifest, Plugin> plugins;
+    private final Map<PluginDescriptor, Plugin> plugins;
 
-    public SimplePluginLocator(Map<PluginManifest, Plugin> plugins) {
+    public SimplePluginLocator(Map<PluginDescriptor, Plugin> plugins) {
         this.plugins = plugins;
+    }
+
+    public static SimplePluginLocator fromManifests(Map<PluginManifest, Plugin> plugins) {
+        HashMap<PluginDescriptor, Plugin> descriptorsMap = new HashMap<>();
+
+        for (Map.Entry<PluginManifest, Plugin> pluginEntry : plugins.entrySet()) {
+            descriptorsMap.put(pluginEntry.getKey().getDescriptor(), pluginEntry.getValue());
+        }
+
+        return new SimplePluginLocator(descriptorsMap);
     }
 
     private static boolean matches(PluginDescriptor descriptor,
@@ -34,20 +45,7 @@ public final class SimplePluginLocator implements PluginLocatorService {
 
     @Override
     public Optional<Plugin> find(PluginDescriptor descriptor) {
-        Plugin result = null;
-
-        for (Map.Entry<PluginManifest, Plugin> entry : this.plugins.entrySet()) {
-            if (entry.getKey().getDescriptor() == descriptor) {
-                result = entry.getValue();
-            }
-        }
-
-        return Optional.ofNullable(result);
-    }
-
-    @Override
-    public Optional<Plugin> find(PluginManifest manifest) {
-        return Optional.ofNullable(this.plugins.get(manifest));
+        return Optional.ofNullable(this.plugins.get(descriptor));
     }
 
     @Override
@@ -55,8 +53,8 @@ public final class SimplePluginLocator implements PluginLocatorService {
         PluginDescriptor previousDescriptor = null;
         Plugin result = null;
 
-        for (Map.Entry<PluginManifest, Plugin> entry : this.plugins.entrySet()) {
-            PluginDescriptor descriptor = entry.getKey().getDescriptor();
+        for (Map.Entry<PluginDescriptor, Plugin> entry : this.plugins.entrySet()) {
+            PluginDescriptor descriptor = entry.getKey();
 
             if (matches(descriptor, groupId, artifactId, name)) {
                 if (version == null || version.equals(LATEST_VERSION)) {
@@ -77,7 +75,7 @@ public final class SimplePluginLocator implements PluginLocatorService {
     }
 
     @Override
-    public Set<Plugin> findAll(Predicate<PluginManifest> condition) {
+    public Set<Plugin> findAll(Predicate<PluginDescriptor> condition) {
         return this.plugins.entrySet()
                 .stream()
                 .filter(entry -> condition.test(entry.getKey()))

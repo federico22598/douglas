@@ -1,6 +1,5 @@
 package com.github.foskel.douglas.plugin.impl.dependency.process;
 
-import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.haptor.process.DependencyProcessor;
@@ -10,12 +9,12 @@ import com.github.foskel.haptor.satisfy.UnsatisfiedDependencyException;
 /**
  * @author Foskel
  */
-public final class PluginRemovingDependencySatisfyingProcessor implements DependencyProcessor {
+public final class PluginRemovingProcessor implements DependencyProcessor {
     private final PluginRegistry pluginRegistry;
     private final PluginManifest ownerPluginInformation;
 
-    public PluginRemovingDependencySatisfyingProcessor(PluginRegistry pluginRegistry,
-                                                       PluginManifest ownerPluginInformation) {
+    public PluginRemovingProcessor(PluginRegistry pluginRegistry,
+                                   PluginManifest ownerPluginInformation) {
         this.pluginRegistry = pluginRegistry;
         this.ownerPluginInformation = ownerPluginInformation;
     }

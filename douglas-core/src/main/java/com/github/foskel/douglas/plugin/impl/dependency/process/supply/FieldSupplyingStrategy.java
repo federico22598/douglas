@@ -19,10 +19,10 @@ import java.util.Optional;
 /**
  * @author Foskel
  */
-public final class FieldDependencySupplyingStrategy implements DependencySupplyingStrategy {
+public final class FieldSupplyingStrategy implements DependencySupplyingStrategy {
     private final PluginLocatorService dependencyLocator;
 
-    FieldDependencySupplyingStrategy(PluginLocatorService dependencyLocator) {
+    FieldSupplyingStrategy(PluginLocatorService dependencyLocator) {
         this.dependencyLocator = dependencyLocator;
     }
 
@@ -80,7 +80,7 @@ public final class FieldDependencySupplyingStrategy implements DependencySupplyi
         }
 
         declaredFields.stream()
-                .peek(FieldDependencySupplyingStrategy::ensureAccessibility)
+                .peek(FieldSupplyingStrategy::ensureAccessibility)
                 .filter(field -> shouldReplace(field, source))
                 .forEach(field -> {
                     Supply supplyAnnotation = field.getAnnotation(Supply.class);

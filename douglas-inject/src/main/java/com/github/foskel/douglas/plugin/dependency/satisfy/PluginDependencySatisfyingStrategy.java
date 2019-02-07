@@ -1,6 +1,7 @@
 package com.github.foskel.douglas.plugin.dependency.satisfy;
 
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
@@ -17,7 +18,7 @@ import java.util.Set;
 /**
  * @author Foskel
  */
-public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy<PluginManifest, Plugin> {
+public final class PluginDependencySatisfyingStrategy implements DependencySatisfyingStrategy<PluginDescriptor, Plugin> {
     private final DependencyValidatorService validatorService;
 
     public PluginDependencySatisfyingStrategy(DependencyValidatorService validatorService) {
@@ -25,9 +26,9 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
     }
 
     @Override
-    public List<DependencySatisfyingResult<PluginManifest, Plugin>> satisfy(DependencyRegistry<PluginManifest, Plugin> registry,
-                                                                            Set<DependencyProcessor> processors,
-                                                                            Map<PluginManifest, Plugin> dependencies) {
+    public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(DependencyRegistry<PluginDescriptor, Plugin> registry,
+                                                                              Set<DependencyProcessor> processors,
+                                                                              Map<PluginDescriptor, Plugin> dependencies) {
         if (!dependencies.isEmpty()) {
             dependencies.forEach((identifier, dependency) -> {
                 if (dependency != null) {
@@ -38,14 +39,14 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
             });
         }
 
-        List<DependencySatisfyingResult<PluginManifest, Plugin>> results = new ArrayList<>(registry.findAllDependencies().size());
+        List<DependencySatisfyingResult<PluginDescriptor, Plugin>> results = new ArrayList<>(registry.findAllDependencies().size());
 
-        for (Map.Entry<PluginManifest, Plugin> dependencyEntry : registry.findAllDependencies().entrySet()) {
-            PluginManifest dependencyIdentifier = dependencyEntry.getKey();
+        for (Map.Entry<PluginDescriptor, Plugin> dependencyEntry : registry.findAllDependencies().entrySet()) {
+            PluginDescriptor dependencyIdentifier = dependencyEntry.getKey();
             Plugin dependency = dependencyEntry.getValue();
 
             boolean validatingResult = this.validatorService.validate(dependency);
-            DependencySatisfyingResult<PluginManifest, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
+            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
                     dependency,
                     validatingResult);
 
@@ -61,34 +62,5 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
         }
 
         return results;
-    }
-
-    private DependencySatisfyingResult satisfy(PluginManifest dependencyIdentifier,
-                                               Plugin dependency,
-                                               DependencyRegistry<PluginManifest, Plugin> registry,
-                                               Set<DependencyProcessor> processors) {
-        if (dependency != null) {
-            if (registry.has(dependencyIdentifier)) {
-                registry.registerDirectly(dependencyIdentifier, dependency);
-            }
-
-            boolean validatingResult = this.validatorService.validate(dependency);
-
-            DependencySatisfyingResult<PluginManifest, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
-                    dependency,
-                    validatingResult);
-
-            processors.forEach(processor -> {
-                try {
-                    processor.postSatisfy(result);
-                } catch (UnsatisfiedDependencyException exception) {
-                    exception.printStackTrace();
-                }
-            });
-
-            return result;
-        }
-
-        return null;
     }
 }

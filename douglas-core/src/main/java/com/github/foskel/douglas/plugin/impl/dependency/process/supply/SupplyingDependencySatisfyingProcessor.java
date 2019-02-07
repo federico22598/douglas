@@ -19,7 +19,7 @@ public final class SupplyingDependencySatisfyingProcessor implements DependencyP
 
     public static SupplyingDependencySatisfyingProcessor of(PluginLocatorService locatorService, Object source) {
         return new SupplyingDependencySatisfyingProcessor(
-                new FieldDependencySupplyingStrategy(locatorService), source);
+                new FieldSupplyingStrategy(locatorService), source);
     }
 
     @Override

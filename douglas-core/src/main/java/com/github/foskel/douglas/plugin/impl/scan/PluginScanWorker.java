@@ -4,6 +4,7 @@ import com.github.foskel.douglas.instantiation.InstantiationException;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.resource.ResourceHandler;
@@ -42,7 +43,9 @@ public final class PluginScanWorker {
         PluginDependencySystem dependencySystem = plugin.getDependencySystem();
 
         if (dependencySystem != null) {
-            dependencySystem.register(manifest);
+            for (PluginDescriptor dependencyDescriptor : manifest.getDependencyDescriptors()) {
+                dependencySystem.register(dependencyDescriptor);
+            }
         }
     }
 

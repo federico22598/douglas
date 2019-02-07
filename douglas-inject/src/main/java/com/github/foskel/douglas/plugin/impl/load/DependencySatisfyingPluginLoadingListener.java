@@ -2,7 +2,7 @@ package com.github.foskel.douglas.plugin.impl.load;
 
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
-import com.github.foskel.douglas.plugin.impl.dependency.process.PluginRemovingDependencySatisfyingProcessor;
+import com.github.foskel.douglas.plugin.impl.dependency.process.PluginRemovingProcessor;
 import com.github.foskel.douglas.plugin.impl.dependency.process.supply.SupplyingDependencySatisfyingProcessor;
 import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
@@ -47,7 +47,7 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
     private void addDefaultProcessors(PluginManifest descriptor,
                                       Plugin plugin,
                                       PluginRegistry registry) {
-        this.satisfyingProcessors.add(new PluginRemovingDependencySatisfyingProcessor(registry, descriptor));
+        this.satisfyingProcessors.add(new PluginRemovingProcessor(registry, descriptor));
         this.satisfyingProcessors.add(SupplyingDependencySatisfyingProcessor.of(registry.getLocator(), plugin));
     }
 }

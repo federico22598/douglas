@@ -20,8 +20,6 @@ public interface PluginRegistry {
 
     boolean unregisterIf(Predicate<PluginManifest> condition);
 
-    boolean unregisterAll(Collection<PluginManifest> manifests);
-
     PluginLocatorService getLocator();
 
     Map<PluginManifest, Plugin> findAllPlugins();

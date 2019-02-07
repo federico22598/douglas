@@ -6,7 +6,7 @@ import com.github.foskel.douglas.plugin.dependency.registry.PluginDependencyRegi
 import com.github.foskel.douglas.plugin.dependency.satisfy.PluginDependencySatisfyingStrategy;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorProvider;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
-import com.github.foskel.douglas.plugin.manifest.PluginManifest;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
@@ -21,7 +21,7 @@ import java.util.*;
 public final class StandardPluginDependencySystem implements PluginDependencySystem {
     private final PluginDependencyRegistry registry;
     private final Set<DependencyProcessor> satisfyingProcessors;
-    private final DependencySatisfyingStrategy<PluginManifest, Plugin> dependencySatisfyingStrategy;
+    private final DependencySatisfyingStrategy<PluginDescriptor, Plugin> dependencySatisfyingStrategy;
     private final PluginLocatorService locator;
 
     public StandardPluginDependencySystem(PluginLocatorProvider locatorProvider) {
@@ -32,12 +32,12 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
     }
 
     @Override
-    public boolean register(PluginManifest source) {
+    public boolean register(PluginDescriptor source) {
         return this.registry.registerDirectly(source, null);
     }
 
     @Override
-    public boolean unregister(PluginManifest source) {
+    public boolean unregister(PluginDescriptor source) {
         return this.registry.unregisterDirectly(source);
     }
 
@@ -52,19 +52,19 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
-    public <T extends Plugin> T find(PluginManifest identifier) {
+    @SuppressWarnings({"unchecked"})
+    public <T extends Plugin> T find(PluginDescriptor identifier) {
         return (T) this.locator.find(identifier).get();
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    @SuppressWarnings({"unchecked"})
     public <T extends Plugin> T find(String groupId, String artifactId, String version, String name) {
         return (T) this.locator.find(groupId, artifactId, version, name).get();
     }
 
     @Override
-    public List<DependencySatisfyingResult<PluginManifest, Plugin>> satisfy(Map<PluginManifest, Plugin> unsatisfiedDependencies) {
+    public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(Map<PluginDescriptor, Plugin> unsatisfiedDependencies) {
         return this.dependencySatisfyingStrategy.satisfy(this.registry,
                 this.satisfyingProcessors,
                 unsatisfiedDependencies);
@@ -72,8 +72,8 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
 
     @Override
     public void satisfy() {
-        Map<PluginManifest, Plugin> dependencies = new HashMap<>();
-        Set<PluginManifest> unsatisfiedDependencies = this.registry.findAllDependencies().keySet();
+        Map<PluginDescriptor, Plugin> dependencies = new HashMap<>();
+        Set<PluginDescriptor> unsatisfiedDependencies = this.registry.findAllDependencies().keySet();
 
         unsatisfiedDependencies.forEach(manifest -> {
             Optional<Plugin> candidateDependency = this.locator.find(manifest);
@@ -84,10 +84,10 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
         /*
         //https://stackoverflow.com/questions/174093/toarraynew-myclass0-or-toarraynew-myclassmylist-size
         @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
-        PluginManifest[] unsatisfiedDependenciesArray = unsatisfiedDependencies.toArray(new PluginManifest[unsatisfiedDependencies.size()]);
+        PluginDescriptor[] unsatisfiedDependenciesArray = unsatisfiedDependencies.toArray(new PluginDescriptor[unsatisfiedDependencies.size()]);
 
         for (int i = 0; i < unsatisfiedDependenciesArray.length; i++) {
-            PluginManifest manifest = unsatisfiedDependenciesArray[i];
+            PluginDescriptor manifest = unsatisfiedDependenciesArray[i];
             Optional<Plugin> candidateDependency = this.locator.find(manifest);
 
             candidateDependency.ifPresent(dependency -> dependencies.put(manifest, dependency));
@@ -98,7 +98,7 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
     }
 
     @Override
-    public DependencyRegistry<PluginManifest, Plugin> getRegistry() {
+    public DependencyRegistry<PluginDescriptor, Plugin> getRegistry() {
         return this.registry;
     }
 }

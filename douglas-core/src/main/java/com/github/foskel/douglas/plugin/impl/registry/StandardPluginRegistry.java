@@ -19,7 +19,7 @@ public class StandardPluginRegistry implements PluginRegistry {
 
     public StandardPluginRegistry() {
         this.plugins = new ConcurrentHashMap<>();
-        this.locatorService = new SimplePluginLocator(this.plugins);
+        this.locatorService = SimplePluginLocator.fromManifests(this.plugins);
     }
 
     @Override
@@ -72,14 +72,14 @@ public class StandardPluginRegistry implements PluginRegistry {
             if (condition.test(next)) {
                 iterator.remove();
 
-                removed = this.unregisterDependenciesOf(next);
+                removed = this.unregisterDependentsOf(next);
             }
         }
 
         return removed;
     }
 
-    @Override
+   /* @Override
     public boolean unregisterAll(Collection<PluginManifest> manifests) {
         boolean removed = false;
         Iterator<PluginManifest> iterator = this.plugins.keySet().iterator();
@@ -90,26 +90,15 @@ public class StandardPluginRegistry implements PluginRegistry {
             if (manifests.contains(next)) {
                 iterator.remove();
 
-                removed = this.unregisterDependenciesOf(next);
+                removed = this.unregisterDependentsOf(next);
             }
         }
 
         return removed;
-    }
+    }*/
 
-    private boolean unregisterDependenciesOf(PluginManifest pluginInformation) {
-        Optional<Plugin> pluginResult = this.locatorService.find(pluginInformation);
-
-        if (!pluginResult.isPresent()) {
-            return false;
-        }
-
-        Plugin plugin = pluginResult.get();
-
-        return this.unregisterAll(plugin.getDependencySystem()
-                .getRegistry()
-                .findAllDependencies()
-                .keySet());
+    private boolean unregisterDependentsOf(PluginManifest pluginInformation) {
+        return this.plugins.keySet().removeIf(next -> next.getDependencyDescriptors().contains(pluginInformation.getDescriptor()));
     }
 
     @Override
@@ -125,13 +114,5 @@ public class StandardPluginRegistry implements PluginRegistry {
     @Override
     public void clear() {
         this.plugins.clear();
-    }
-
-    private void clearDependencies() {
-        this.findAllPlugins().values().forEach(plugin ->
-                this.unregisterAll(plugin.getDependencySystem()
-                        .getRegistry()
-                        .findAllDependencies()
-                        .keySet()));
     }
 }
