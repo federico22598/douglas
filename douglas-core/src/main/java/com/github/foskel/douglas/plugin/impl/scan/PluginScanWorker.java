@@ -3,6 +3,7 @@ package com.github.foskel.douglas.plugin.impl.scan;
 import com.github.foskel.douglas.instantiation.InstantiationException;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.resource.ResourceHandler;
@@ -38,7 +39,11 @@ public final class PluginScanWorker {
     }
 
     private static void registerDependencies(Plugin plugin, PluginManifest manifest) {
-        plugin.getDependencySystem().register(manifest);
+        PluginDependencySystem dependencySystem = plugin.getDependencySystem();
+
+        if (dependencySystem != null) {
+            dependencySystem.register(manifest);
+        }
     }
 
     public PluginScanResult scan(Path file) throws PluginScanFailedException {
