@@ -11,12 +11,9 @@ import java.util.function.Predicate;
  * @author Foskel
  */
 public interface PluginLocatorService {
-    Optional<Plugin> find(String groupId,
-                          String artifactId,
-                          String version,
-                          String name);
+    Plugin find(PluginDescriptor descriptor);
 
-    Optional<Plugin> find(PluginDescriptor descriptor);
+    Plugin find(String groupId, String artifactId);
 
     Set<Plugin> findAll(Predicate<PluginDescriptor> condition);
 }

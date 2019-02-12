@@ -54,13 +54,13 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
     @Override
     @SuppressWarnings({"unchecked"})
     public <T extends Plugin> T find(PluginDescriptor identifier) {
-        return (T) this.locator.find(identifier).get();
+        return (T) this.locator.find(identifier);
     }
 
     @Override
     @SuppressWarnings({"unchecked"})
-    public <T extends Plugin> T find(String groupId, String artifactId, String version, String name) {
-        return (T) this.locator.find(groupId, artifactId, version, name).get();
+    public <T extends Plugin> T find(String groupId, String artifactId) {
+        return (T) this.locator.find(groupId, artifactId);
     }
 
     @Override
@@ -76,9 +76,11 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
         Set<PluginDescriptor> unsatisfiedDependencies = this.registry.findAllDependencies().keySet();
 
         unsatisfiedDependencies.forEach(manifest -> {
-            Optional<Plugin> candidateDependency = this.locator.find(manifest);
+            Plugin dependency = this.locator.find(manifest);
 
-            candidateDependency.ifPresent(dependency -> dependencies.put(manifest, dependency));
+            if (dependency != null) {
+                dependencies.put(manifest, dependency);
+            }
         });
 
         this.satisfy(dependencies);

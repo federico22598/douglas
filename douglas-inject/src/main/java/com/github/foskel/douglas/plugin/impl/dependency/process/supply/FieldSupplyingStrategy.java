@@ -13,8 +13,6 @@ import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * @author Foskel
@@ -79,16 +77,23 @@ public final class FieldSupplyingStrategy implements DependencySupplyingStrategy
             return;
         }
 
-        declaredFields.stream()
-                .peek(FieldSupplyingStrategy::ensureAccessibility)
-                .filter(field -> shouldReplace(field, source))
-                .forEach(field -> {
-                    Supply supplyAnnotation = field.getAnnotation(Supply.class);
-                    PluginDescriptor descriptor = createDescriptor(supplyAnnotation);
-                    Plugin dependency = this.dependencyLocator.find(descriptor).orElseThrow(NoSuchElementException::new);
+        for (Field field : declaredFields) {
+            ensureAccessibility(field);
 
-                    setValue(field, source, dependency);
-                });
+            if (shouldReplace(field, source)) {
+                Supply supplyAnnotation = field.getAnnotation(Supply.class);
+                PluginDescriptor descriptor = createDescriptor(supplyAnnotation);
+                Plugin dependency = this.dependencyLocator.find(descriptor);
+
+                if (dependency == null) {
+                    throw new DependencySupplyingException("Unable to supply plugin dependency instance " +
+                            "of field \"" + field.getName() + "\" annotated with " + Supply.class.getCanonicalName() +
+                            " from class \"" + source.getClass().getCanonicalName() + "\"");
+                }
+
+                setValue(field, source, dependency);
+            }
+        }
     }
 
     private boolean shouldReplace(Field field, Object source) {
@@ -96,15 +101,6 @@ public final class FieldSupplyingStrategy implements DependencySupplyingStrategy
 
         if (supplyAnnotation == null) {
             return false;
-        }
-
-        PluginDescriptor descriptor = createDescriptor(supplyAnnotation);
-        Optional<Plugin> dependencyResult = this.dependencyLocator.find(descriptor);
-
-        if (!dependencyResult.isPresent()) {
-            throw new DependencySupplyingException("Unable to supply plugin dependency instance " +
-                    "of field \"" + field.getName() + "\" annotated with " + Supply.class.getCanonicalName() +
-                    " from class \"" + source.getClass().getCanonicalName() + "\"");
         }
 
         return getValue(field, source) == null;

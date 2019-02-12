@@ -11,8 +11,5 @@ import com.github.foskel.haptor.DependencySystem;
 public interface PluginDependencySystem extends DependencySystem<PluginDescriptor, PluginDescriptor, Plugin> {
     void satisfy();
 
-    <T extends Plugin> T find(String groupId,
-                              String artifactId,
-                              String version,
-                              String name);
+    <T extends Plugin> T find(String groupId, String artifactId);
 }
