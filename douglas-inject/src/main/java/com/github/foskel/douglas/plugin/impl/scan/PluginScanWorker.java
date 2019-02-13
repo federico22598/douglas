@@ -80,6 +80,7 @@ public final class PluginScanWorker {
             throw new PluginScanFailedException("Unable to find a valid plugin class which name matches \"" + mainClassCanonical + "\"");
         }
 
+        System.out.println("Dependency descriptors: " + manifest.getDependencyDescriptors());
         registerDependencies(plugin, manifest);
 
         return new SimplePluginScanResult(manifest, plugin);

@@ -2,7 +2,6 @@ package com.github.foskel.douglas.plugin.dependency.satisfy;
 
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
-import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
@@ -27,8 +26,8 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
 
     @Override
     public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(DependencyRegistry<PluginDescriptor, Plugin> registry,
-                                                                            Set<DependencyProcessor> processors,
-                                                                            Map<PluginDescriptor, Plugin> dependencies) {
+                                                                              Set<DependencyProcessor> processors,
+                                                                              Map<PluginDescriptor, Plugin> dependencies) {
         if (!dependencies.isEmpty()) {
             dependencies.forEach((identifier, dependency) -> {
                 if (dependency != null) {
@@ -46,9 +45,7 @@ public final class PluginDependencySatisfyingStrategy implements DependencySatis
             Plugin dependency = dependencyEntry.getValue();
 
             boolean validatingResult = this.validatorService.validate(dependency);
-            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier,
-                    dependency,
-                    validatingResult);
+            DependencySatisfyingResult<PluginDescriptor, Plugin> result = new DependencySatisfyingResult<>(dependencyIdentifier, dependency, validatingResult);
 
             processors.forEach(processor -> {
                 try {

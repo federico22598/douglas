@@ -75,11 +75,11 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
         Map<PluginDescriptor, Plugin> dependencies = new HashMap<>();
         Set<PluginDescriptor> unsatisfiedDependencies = this.registry.findAllDependencies().keySet();
 
-        unsatisfiedDependencies.forEach(manifest -> {
-            Plugin dependency = this.locator.find(manifest);
+        unsatisfiedDependencies.forEach(descriptor -> {
+            Plugin dependency = this.locator.find(descriptor);
 
             if (dependency != null) {
-                dependencies.put(manifest, dependency);
+                dependencies.put(descriptor, dependency);
             }
         });
 
