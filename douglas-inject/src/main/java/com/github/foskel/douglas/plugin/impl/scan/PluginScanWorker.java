@@ -91,7 +91,7 @@ public final class PluginScanWorker {
     }
 
     private void handleResources(PluginManifest descriptor, Class<?> type) {
-        if (descriptor.getResources().contains(type.getCanonicalName())) {
+        if (!descriptor.getResources().isEmpty()) {
             this.resourceHandler.handle(type, this.classLoader);
         }
     }

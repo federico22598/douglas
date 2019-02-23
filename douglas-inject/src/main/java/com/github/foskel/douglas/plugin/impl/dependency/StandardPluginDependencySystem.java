@@ -4,13 +4,14 @@ import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
 import com.github.foskel.douglas.plugin.dependency.registry.PluginDependencyRegistry;
 import com.github.foskel.douglas.plugin.dependency.satisfy.PluginDependencySatisfyingStrategy;
-import com.github.foskel.douglas.plugin.locate.PluginLocatorProvider;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorService;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
+import com.github.foskel.douglas.util.Exceptions;
 import com.github.foskel.haptor.process.DependencyProcessor;
 import com.github.foskel.haptor.registry.DependencyRegistry;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingResult;
 import com.github.foskel.haptor.satisfy.DependencySatisfyingStrategy;
+import com.github.foskel.haptor.satisfy.UnsatisfiedDependencyException;
 import com.github.foskel.haptor.validate.NullCheckingDependencyValidator;
 
 import java.util.*;
@@ -22,13 +23,12 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
     private final PluginDependencyRegistry registry;
     private final Set<DependencyProcessor> satisfyingProcessors;
     private final DependencySatisfyingStrategy<PluginDescriptor, Plugin> dependencySatisfyingStrategy;
-    private final PluginLocatorService locator;
+    private PluginLocatorService dependencyLocator;
 
-    public StandardPluginDependencySystem(PluginLocatorProvider locatorProvider) {
+    public StandardPluginDependencySystem() {
         this.registry = new PluginDependencyRegistry();
         this.satisfyingProcessors = new HashSet<>();
         this.dependencySatisfyingStrategy = new PluginDependencySatisfyingStrategy(NullCheckingDependencyValidator.INSTANCE);
-        this.locator = locatorProvider.createPluginLocator(this.registry.findAllDependencies());
     }
 
     @Override
@@ -54,29 +54,39 @@ public final class StandardPluginDependencySystem implements PluginDependencySys
     @Override
     @SuppressWarnings({"unchecked"})
     public <T extends Plugin> T find(PluginDescriptor identifier) {
-        return (T) this.locator.find(identifier);
+        if (this.dependencyLocator == null) {
+            Exceptions.throwAsUnchecked(new UnsatisfiedDependencyException(identifier));
+            return null;
+        }
+
+        return (T) this.dependencyLocator.find(identifier);
     }
 
     @Override
     @SuppressWarnings({"unchecked"})
     public <T extends Plugin> T find(String groupId, String artifactId) {
-        return (T) this.locator.find(groupId, artifactId);
+        if (this.dependencyLocator == null) {
+            Exceptions.throwAsUnchecked(new UnsatisfiedDependencyException(artifactId));
+            return null;
+        }
+
+        return (T) this.dependencyLocator.find(groupId, artifactId);
     }
 
     @Override
     public List<DependencySatisfyingResult<PluginDescriptor, Plugin>> satisfy(Map<PluginDescriptor, Plugin> unsatisfiedDependencies) {
-        return this.dependencySatisfyingStrategy.satisfy(this.registry,
-                this.satisfyingProcessors,
-                unsatisfiedDependencies);
+        return this.dependencySatisfyingStrategy.satisfy(this.registry, this.satisfyingProcessors, unsatisfiedDependencies);
     }
 
     @Override
-    public void satisfy() {
+    public void satisfy(PluginLocatorService dependencyLocator) {
+        this.dependencyLocator = dependencyLocator;
+
         Map<PluginDescriptor, Plugin> dependencies = new HashMap<>();
         Set<PluginDescriptor> unsatisfiedDependencies = this.registry.findAllDependencies().keySet();
 
         unsatisfiedDependencies.forEach(manifest -> {
-            Plugin dependency = this.locator.find(manifest);
+            Plugin dependency = this.dependencyLocator.find(manifest);
 
             if (dependency != null) {
                 dependencies.put(manifest, dependency);

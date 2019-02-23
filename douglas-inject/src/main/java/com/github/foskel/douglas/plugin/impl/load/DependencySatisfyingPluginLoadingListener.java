@@ -28,26 +28,14 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
         registry.findAllPlugins().forEach((descriptor, plugin) -> this.satisfyPluginDependencies(descriptor, plugin, registry));
     }
 
-    private void satisfyPluginDependencies(PluginManifest descriptor,
-                                           Plugin plugin,
-                                           PluginRegistry registry) {
+    private void satisfyPluginDependencies(PluginManifest manifest, Plugin plugin, PluginRegistry registry) {
         PluginDependencySystem dependencySystem = plugin.getDependencySystem();
 
-        this.addDefaultProcessors(descriptor,
-                plugin,
-                registry);
+        dependencySystem.registerProcessor(new PluginRemovingProcessor(registry, manifest));
+        dependencySystem.registerProcessor(SupplyingDependencySatisfyingProcessor.of(registry.getLocator(), plugin));
 
-        if (!this.satisfyingProcessors.isEmpty()) {
-            this.satisfyingProcessors.forEach(dependencySystem::registerProcessor);
-        }
+        this.satisfyingProcessors.forEach(dependencySystem::registerProcessor);
 
-        dependencySystem.satisfy();
-    }
-
-    private void addDefaultProcessors(PluginManifest descriptor,
-                                      Plugin plugin,
-                                      PluginRegistry registry) {
-        this.satisfyingProcessors.add(new PluginRemovingProcessor(registry, descriptor));
-        this.satisfyingProcessors.add(SupplyingDependencySatisfyingProcessor.of(registry.getLocator(), plugin));
+        dependencySystem.satisfy(registry.getLocator());
     }
 }

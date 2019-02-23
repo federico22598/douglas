@@ -28,9 +28,7 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
         registry.findAllPlugins().forEach((descriptor, plugin) -> this.satisfyPluginDependencies(descriptor, plugin, registry));
     }
 
-    private void satisfyPluginDependencies(PluginManifest manifest,
-                                           Plugin plugin,
-                                           PluginRegistry registry) {
+    private void satisfyPluginDependencies(PluginManifest manifest, Plugin plugin, PluginRegistry registry) {
         PluginDependencySystem dependencySystem = plugin.getDependencySystem();
 
         dependencySystem.registerProcessor(new PluginRemovingProcessor(registry, manifest));
@@ -38,6 +36,6 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
 
         this.satisfyingProcessors.forEach(dependencySystem::registerProcessor);
 
-        dependencySystem.satisfy();
+        dependencySystem.satisfy(registry.getLocator());
     }
 }
