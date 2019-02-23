@@ -34,7 +34,7 @@ public final class Douglas {
     }
 
     public static PluginDependencySystem newPluginDependencySystem() {
-        return new StandardPluginDependencySystem(new SimplePluginLocatorProvider());
+        return new StandardPluginDependencySystem();
     }
 
     public static PluginManifestExtractor newPluginDescriptorExtractor() {
