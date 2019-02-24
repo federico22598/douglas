@@ -3,7 +3,6 @@ package com.github.foskel.douglas.plugin.locate;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 

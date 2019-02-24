@@ -10,9 +10,7 @@ import java.util.Objects;
 /**
  * @author Foskel
  */
-public enum AnnotationPluginPriorityResolver implements PluginPriorityResolver {
-    INSTANCE;
-
+public final class AnnotationPluginPriorityResolver implements PluginPriorityResolver {
     private static final PluginPriority DEFAULT_PRIORITY = PluginPriority.NORMAL;
 
     @Override

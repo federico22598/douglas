@@ -3,7 +3,6 @@ package com.github.foskel.douglas.guice;
 import com.github.foskel.douglas.module.Module;
 import com.github.foskel.douglas.module.ModuleManager;
 import com.github.foskel.douglas.module.SynchronizedModuleManager;
-import com.github.foskel.douglas.module.ModuleDependencySatisfier;
 import com.github.foskel.douglas.module.locate.ModuleLocatorProvider;
 import com.github.foskel.douglas.module.locate.SynchronizedModuleLocatorProvider;
 import com.google.inject.AbstractModule;

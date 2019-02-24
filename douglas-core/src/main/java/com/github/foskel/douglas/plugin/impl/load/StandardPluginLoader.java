@@ -3,7 +3,6 @@ package com.github.foskel.douglas.plugin.impl.load;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.impl.load.priority.AnnotationPluginPriorityResolver;
 import com.github.foskel.douglas.plugin.load.PluginLoader;
-import com.github.foskel.douglas.plugin.load.priority.PluginPriority;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
 import java.util.ArrayList;

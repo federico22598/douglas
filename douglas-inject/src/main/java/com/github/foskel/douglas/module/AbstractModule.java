@@ -2,7 +2,6 @@ package com.github.foskel.douglas.module;
 
 import com.github.foskel.haptor.DependencySystem;
 import com.github.foskel.haptor.Haptor;
-import com.github.foskel.haptor.scan.AnnotationDependencyScanner;
 
 import java.util.Objects;
 
