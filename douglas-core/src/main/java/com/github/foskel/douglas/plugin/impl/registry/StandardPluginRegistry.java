@@ -22,7 +22,7 @@ public class StandardPluginRegistry implements PluginRegistry {
 
     public StandardPluginRegistry() {
         this.plugins = new ConcurrentHashMap<>();
-        this.locatorService = SimplePluginLocator.fromManifests(this.plugins);
+        this.locatorService = new SimplePluginLocator(this);
     }
 
     @Override

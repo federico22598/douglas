@@ -24,7 +24,7 @@ public class StandardPluginRegistry implements PluginRegistry {
     @Inject
     StandardPluginRegistry(PluginLocatorProvider locatorProvider) {
         this.plugins = new ConcurrentHashMap<>();
-        this.locatorService = locatorProvider.createPluginLocatorFromManifests(this.plugins);
+        this.locatorService = locatorProvider.createPluginLocator(this);
     }
 
     @Override
