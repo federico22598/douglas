@@ -7,15 +7,18 @@ import com.github.foskel.douglas.plugin.load.priority.PluginPriority;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author Foskel
  */
 public final class StandardPluginLoader implements PluginLoader {
-    private List<Plugin> cachedPlugins;
     private final Comparator<Plugin> loadPriorityComparator;
     private final Comparator<Plugin> unloadPriorityComparator;
+    private List<Plugin> cachedPlugins;
 
     @Inject
     StandardPluginLoader(PluginPriorityResolver priorityResolver) {
@@ -25,7 +28,7 @@ public final class StandardPluginLoader implements PluginLoader {
 
     @Override
     public void load(Collection<Plugin> plugins) {
-        if (!cachedPlugins.equals(plugins)) {
+        if (cachedPlugins == null || !cachedPlugins.equals(plugins)) {
             cachedPlugins = new ArrayList<>(plugins);
         }
 
@@ -38,7 +41,7 @@ public final class StandardPluginLoader implements PluginLoader {
 
     @Override
     public void unload(Collection<Plugin> plugins) {
-        if (!cachedPlugins.equals(plugins)) {
+        if (cachedPlugins == null || !cachedPlugins.equals(plugins)) {
             cachedPlugins = new ArrayList<>(plugins);
         }
 
@@ -55,10 +58,8 @@ public final class StandardPluginLoader implements PluginLoader {
 
         @Override
         public int compare(Plugin firstPlugin, Plugin secondPlugin) {
-            PluginPriority firstPluginPriority = this.resolver.resolveLoadingPriority(firstPlugin);
-            PluginPriority secondPluginPriority = this.resolver.resolveLoadingPriority(secondPlugin);
-
-            return firstPluginPriority.compareTo(secondPluginPriority);
+            return this.resolver.resolveLoadingPriority(firstPlugin).compareTo(
+                    this.resolver.resolveLoadingPriority(secondPlugin));
         }
     }
 
@@ -71,10 +72,8 @@ public final class StandardPluginLoader implements PluginLoader {
 
         @Override
         public int compare(Plugin firstPlugin, Plugin secondPlugin) {
-            PluginPriority firstPluginPriority = this.resolver.resolveUnloadingPriority(firstPlugin);
-            PluginPriority secondPluginPriority = this.resolver.resolveUnloadingPriority(secondPlugin);
-
-            return firstPluginPriority.compareTo(secondPluginPriority);
+            return this.resolver.resolveUnloadingPriority(firstPlugin).compareTo(
+                    this.resolver.resolveUnloadingPriority(secondPlugin));
         }
     }
 }

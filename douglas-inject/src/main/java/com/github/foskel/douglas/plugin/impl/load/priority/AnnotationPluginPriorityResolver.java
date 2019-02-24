@@ -10,9 +10,10 @@ import java.util.Objects;
 /**
  * @author Foskel
  */
-public final class AnnotationPluginPriorityResolver implements PluginPriorityResolver {
-    private static final PluginPriority DEFAULT_LOADING_PRIORITY = PluginPriority.NORMAL;
-    private static final PluginPriority DEFAULT_UNLOADING_PRIORITY = PluginPriority.NORMAL;
+public enum AnnotationPluginPriorityResolver implements PluginPriorityResolver {
+    INSTANCE;
+
+    private static final PluginPriority DEFAULT_PRIORITY = PluginPriority.NORMAL;
 
     @Override
     public PluginPriority resolveLoadingPriority(Plugin plugin) {
@@ -21,7 +22,7 @@ public final class AnnotationPluginPriorityResolver implements PluginPriorityRes
         Class<? extends Plugin> pluginType = plugin.getClass();
 
         if (!pluginType.isAnnotationPresent(Priority.class)) {
-            return DEFAULT_LOADING_PRIORITY;
+            return DEFAULT_PRIORITY;
         }
 
         Priority annotation = pluginType.getAnnotation(Priority.class);
@@ -36,7 +37,7 @@ public final class AnnotationPluginPriorityResolver implements PluginPriorityRes
         Class<? extends Plugin> pluginType = plugin.getClass();
 
         if (!pluginType.isAnnotationPresent(Priority.class)) {
-            return DEFAULT_UNLOADING_PRIORITY;
+            return DEFAULT_PRIORITY;
         }
 
         Priority annotation = pluginType.getAnnotation(Priority.class);

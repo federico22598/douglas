@@ -14,7 +14,6 @@ import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor
  *
  * @author Foskel
  */
-@SuppressWarnings("WeakerAccess")
 public final class Douglas {
     private static final Version VERSION = Version.builder()
             .major(0)
