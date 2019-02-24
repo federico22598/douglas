@@ -16,9 +16,7 @@ public final class PathPluginSourceValidator implements PluginSourceValidator<Pa
         if (path == null) {
             throw new PluginSourceValidatingException("The Path cannot be null!");
         } else if (!Files.isDirectory(path)) {
-            String fileName = path
-                    .getFileName()
-                    .toString();
+            String fileName = path.getFileName().toString();
 
             throw new PluginSourceValidatingException("The provided Path (" + fileName + ") is not a directory");
         }

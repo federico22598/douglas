@@ -6,7 +6,7 @@ import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.instantiation.ZeroArgumentInstantiationStrategy;
 import com.github.foskel.douglas.module.Module;
 import com.github.foskel.douglas.module.ModuleManager;
-import com.github.foskel.douglas.module.dependency.SimpleModuleDependencySatisfyingService;
+import com.github.foskel.douglas.module.SynchronizedModuleManager;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.impl.StandardPluginManager;
@@ -75,7 +75,6 @@ public final class Douglas {
                 .instantiationStrategy(instantiationStrategy)
                 .informationExtractor(newPluginDescriptorExtractor())
                 .resourceHandler(new AnnotationResourceHandler())
-
                 .build();
     }
 
@@ -96,8 +95,6 @@ public final class Douglas {
     }
 
     public static ModuleManager newModuleManager(Map<String, Module> modules) {
-        return ModuleManager.builder(modules)
-                .dependencySatisfier(new SimpleModuleDependencySatisfyingService())
-                .build();
+        return new SynchronizedModuleManager(modules);
     }
 }

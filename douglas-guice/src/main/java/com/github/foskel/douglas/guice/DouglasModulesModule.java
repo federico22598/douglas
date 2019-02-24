@@ -3,8 +3,7 @@ package com.github.foskel.douglas.guice;
 import com.github.foskel.douglas.module.Module;
 import com.github.foskel.douglas.module.ModuleManager;
 import com.github.foskel.douglas.module.SynchronizedModuleManager;
-import com.github.foskel.douglas.module.dependency.ModuleDependencySatisfyingService;
-import com.github.foskel.douglas.module.dependency.SimpleModuleDependencySatisfyingService;
+import com.github.foskel.douglas.module.ModuleDependencySatisfier;
 import com.github.foskel.douglas.module.locate.ModuleLocatorProvider;
 import com.github.foskel.douglas.module.locate.SynchronizedModuleLocatorProvider;
 import com.google.inject.AbstractModule;
@@ -52,6 +51,5 @@ public final class DouglasModulesModule extends AbstractModule {
     protected void configure() {
         this.bind(ModuleManager.class).to(SynchronizedModuleManager.class).in(Singleton.class);
         this.bind(ModuleLocatorProvider.class).to(SynchronizedModuleLocatorProvider.class);
-        this.bind(ModuleDependencySatisfyingService.class).to(SimpleModuleDependencySatisfyingService.class);
     }
 }

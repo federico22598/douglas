@@ -2,7 +2,7 @@ package com.github.foskel.douglas.module;
 
 import com.github.foskel.haptor.DependencySystem;
 import com.github.foskel.haptor.Haptor;
-import com.github.foskel.haptor.scan.ClassUnsatisfiedDependencyScanner;
+import com.github.foskel.haptor.scan.AnnotationDependencyScanner;
 
 import java.util.Objects;
 
@@ -13,11 +13,11 @@ import java.util.Objects;
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractModule implements Module {
     private final String name;
-    private final DependencySystem<Module, Class<? extends Module>, Module> dependencySystem;
+    private final DependencySystem<Class<? extends Module>, Module> dependencySystem;
 
     public AbstractModule(String name) {
         this.name = name;
-        this.dependencySystem = Haptor.newDependencySystem(ClassUnsatisfiedDependencyScanner.INSTANCE);
+        this.dependencySystem = Haptor.newDependencySystem();
     }
 
     @Override
@@ -27,16 +27,14 @@ public abstract class AbstractModule implements Module {
 
     @Override
     public void load() {
-        this.dependencySystem.register(this);
     }
 
     @Override
     public void unload() {
-        this.dependencySystem.unregister(this);
     }
 
     @Override
-    public DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem() {
+    public DependencySystem<Class<? extends Module>, Module> getDependencySystem() {
         return this.dependencySystem;
     }
 

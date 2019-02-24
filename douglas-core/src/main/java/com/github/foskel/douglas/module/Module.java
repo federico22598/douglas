@@ -6,7 +6,7 @@ import com.github.foskel.douglas.core.traits.Reloadable;
 import com.github.foskel.haptor.DependencySystem;
 
 /**
- * @author Fred
+ * @author Foskel
  * @since 4/4/2017
  */
 public interface Module extends Named, Loadable, Reloadable {
@@ -26,6 +26,5 @@ public interface Module extends Named, Loadable, Reloadable {
         this.load();
     }
 
-    //TODO
-    DependencySystem<Module, Class<? extends Module>, Module> getDependencySystem();
+    DependencySystem<Class<? extends Module>, Module> getDependencySystem();
 }

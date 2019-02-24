@@ -1,18 +1,19 @@
 package com.github.foskel.douglas.plugin.impl.load;
 
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.impl.load.priority.AnnotationPluginPriorityResolver;
 import com.github.foskel.douglas.plugin.load.PluginLoader;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriority;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * @author Foskel
  */
 public final class StandardPluginLoader implements PluginLoader {
+    private List<Plugin> cachedPlugins;
     private final Comparator<Plugin> loadPriorityComparator;
     private final Comparator<Plugin> unloadPriorityComparator;
 
@@ -24,16 +25,25 @@ public final class StandardPluginLoader implements PluginLoader {
 
     @Override
     public void load(Collection<Plugin> plugins) {
-        plugins.stream()
-                .sorted(this.loadPriorityComparator)
-                .forEach(Plugin::load);
+        if (!cachedPlugins.equals(plugins)) {
+            cachedPlugins = new ArrayList<>(plugins);
+        }
+
+        cachedPlugins.sort(loadPriorityComparator);
+        cachedPlugins.forEach(Plugin::load);
+        /*plugins.stream()
+                .sorted(LOAD_PRIORITY_COMPARATOR)
+                .forEach(Plugin::load);*/
     }
 
     @Override
     public void unload(Collection<Plugin> plugins) {
-        plugins.stream()
-                .sorted(this.unloadPriorityComparator)
-                .forEach(Plugin::unload);
+        if (!cachedPlugins.equals(plugins)) {
+            cachedPlugins = new ArrayList<>(plugins);
+        }
+
+        cachedPlugins.sort(unloadPriorityComparator);
+        cachedPlugins.forEach(Plugin::unload);
     }
 
     private static class PluginLoadingPriorityComparator implements Comparator<Plugin> {

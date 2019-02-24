@@ -4,15 +4,14 @@ import com.github.foskel.douglas.core.traits.Toggleable;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.function.Consumer;
 
 /**
- * @author Foskel
+ * @author Fred
  * @since 2/2/2017
  */
 public abstract class ToggleableModule extends AbstractModule implements Toggleable {
-    private final Queue<Consumer<ToggleableModule>> enableListeners = new ArrayDeque<>();
-    private final Queue<Consumer<ToggleableModule>> disableListeners = new ArrayDeque<>();
+    private final Queue<Runnable> enableListeners = new ArrayDeque<>();
+    private final Queue<Runnable> disableListeners = new ArrayDeque<>();
     private boolean enabled;
 
     public ToggleableModule(String name) {
@@ -20,26 +19,26 @@ public abstract class ToggleableModule extends AbstractModule implements Togglea
     }
 
     protected void onEnable() {
-        this.enableListeners.forEach(listener -> listener.accept(this));
+        this.enableListeners.forEach(Runnable::run);
     }
 
     protected void onDisable() {
-        this.disableListeners.forEach(listener -> listener.accept(this));
+        this.disableListeners.forEach(Runnable::run);
     }
 
-    public boolean addEnableListener(Consumer<ToggleableModule> enableListener) {
+    public boolean addEnableListener(Runnable enableListener) {
         return this.enableListeners.add(enableListener);
     }
 
-    public boolean removeEnableListener(Consumer<ToggleableModule> enableListener) {
+    public boolean removeEnableListener(Runnable enableListener) {
         return this.enableListeners.remove(enableListener);
     }
 
-    public boolean addDisableListener(Consumer<ToggleableModule> disableListener) {
+    public boolean addDisableListener(Runnable disableListener) {
         return this.disableListeners.add(disableListener);
     }
 
-    public boolean removeDisableListener(Consumer<ToggleableModule> disableListener) {
+    public boolean removeDisableListener(Runnable disableListener) {
         return this.disableListeners.remove(disableListener);
     }
 

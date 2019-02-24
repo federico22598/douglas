@@ -2,7 +2,8 @@ package com.github.foskel.douglas.plugin;
 
 import com.github.foskel.douglas.core.traits.Loadable;
 import com.github.foskel.douglas.core.traits.Reloadable;
-import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
+import com.github.foskel.haptor.DependencySystem;
 
 /**
  * This interface serves as a model for a plugin's main class.
@@ -28,5 +29,5 @@ public interface Plugin extends Loadable, Reloadable {
         this.load();
     }
 
-    PluginDependencySystem getDependencySystem();
+    DependencySystem<PluginDescriptor, Plugin> getDependencySystem();
 }

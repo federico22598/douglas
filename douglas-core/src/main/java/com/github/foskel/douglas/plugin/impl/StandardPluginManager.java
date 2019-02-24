@@ -54,9 +54,7 @@ public class StandardPluginManager implements PluginManager {
     }
 
     private void loadAllPlugins() {
-        Collection<Plugin> plugins = this.registry
-                .findAllPlugins()
-                .values();
+        Collection<Plugin> plugins = this.registry.findAllPlugins().values();
 
         this.loadingListeners.forEach(processor -> processor.allLoaded(this.registry));
         this.loader.load(plugins);

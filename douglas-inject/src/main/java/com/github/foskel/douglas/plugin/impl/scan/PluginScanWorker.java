@@ -3,7 +3,6 @@ package com.github.foskel.douglas.plugin.impl.scan;
 import com.github.foskel.douglas.instantiation.InstantiationException;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
-import com.github.foskel.douglas.plugin.dependency.PluginDependencySystem;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
@@ -11,6 +10,7 @@ import com.github.foskel.douglas.plugin.resource.ResourceHandler;
 import com.github.foskel.douglas.plugin.scan.PluginScanFailedException;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 import com.github.foskel.douglas.util.Exceptions;
+import com.github.foskel.haptor.DependencySystem;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.lukehutch.fastclasspathscanner.scanner.ClassInfo;
 import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * TODO: Stop using lukehutch's FastClasspathScanner since only one plugin model class must be contained in a JAR file?
- *
  * @author Foskel
  */
 public final class PluginScanWorker {
@@ -40,11 +38,11 @@ public final class PluginScanWorker {
     }
 
     private static void registerDependencies(Plugin plugin, PluginManifest manifest) {
-        PluginDependencySystem dependencySystem = plugin.getDependencySystem();
+        DependencySystem<PluginDescriptor, Plugin> dependencySystem = plugin.getDependencySystem();
 
         if (dependencySystem != null) {
             for (PluginDescriptor dependencyDescriptor : manifest.getDependencyDescriptors()) {
-                dependencySystem.register(dependencyDescriptor);
+                dependencySystem.getRegistry().registerDirectly(dependencyDescriptor, null);//TODO: Make registerUnsatisfiedDirectly(...)
             }
         }
     }
