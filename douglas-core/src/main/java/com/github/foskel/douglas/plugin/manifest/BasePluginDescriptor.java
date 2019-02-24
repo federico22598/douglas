@@ -2,8 +2,6 @@ package com.github.foskel.douglas.plugin.manifest;
 
 import com.github.foskel.douglas.core.version.Version;
 
-import java.util.Objects;
-
 /**
  * @author Foskel
  */
@@ -59,10 +57,10 @@ public final class BasePluginDescriptor implements PluginDescriptor {
 
         PluginDescriptor other = (PluginDescriptor) object;
 
-        return Objects.equals(other.getGroupId(), this.groupId)
-                && Objects.equals(other.getArtifactId(), this.artifactId)
-                && Objects.equals(other.getVersion(), this.version)
-                && Objects.equals(other.getName(), this.name);
+        return other.getGroupId().equals(this.groupId)
+                && other.getArtifactId().equals(this.artifactId)
+                && (other.getVersion() == null || other.getVersion().equals(this.version))
+                && (other.getName() == null || other.getName().equals(this.name));
     }
 
     @Override

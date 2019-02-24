@@ -1,32 +1,59 @@
 package com.github.foskel.douglas.plugin.impl.scan;
 
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 import com.github.foskel.douglas.util.ToStringBuilder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * @author Foskel
  */
 public final class SimplePluginScanResult implements PluginScanResult {
-    private final PluginManifest descriptor;
+    private final PluginManifest manifest;
     private final Plugin plugin;
+    private final List<PluginDescriptor> pendingDependencyDescriptors;
+    private final PluginScanWorker scanWorker;
 
-    public SimplePluginScanResult(PluginManifest descriptor, Plugin plugin) {
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-        this.plugin = Objects.requireNonNull(plugin, "plugin");
+    private SimplePluginScanResult(PluginManifest manifest, Plugin plugin, List<PluginDescriptor> pendingDependencyDescriptors,
+                                   PluginScanWorker scanWorker) {
+        this.manifest = manifest;
+        this.plugin = plugin;
+        this.pendingDependencyDescriptors = pendingDependencyDescriptors;
+        this.scanWorker = scanWorker;
+    }
+
+    public SimplePluginScanResult(PluginManifest manifest, Plugin plugin, PluginScanWorker scanWorker) {
+        this(Objects.requireNonNull(manifest, "manifest"), Objects.requireNonNull(plugin, "plugin"),
+                Collections.emptyList(), scanWorker);
+    }
+
+    public SimplePluginScanResult(PluginManifest manifest, List<PluginDescriptor> pendingDependencyDescriptors, PluginScanWorker scanWorker) {
+        this(manifest, null, pendingDependencyDescriptors, scanWorker);
     }
 
     @Override
-    public PluginManifest getDescriptor() {
-        return this.descriptor;
+    public PluginManifest getManifest() {
+        return this.manifest;
     }
 
     @Override
     public Plugin getPlugin() {
         return this.plugin;
+    }
+
+    @Override
+    public List<PluginDescriptor> getPendingDependencyDescriptors() {
+        return this.pendingDependencyDescriptors;
+    }
+
+    @Override
+    public PluginScanWorker getScanWorker() {
+        return null;
     }
 
     @Override
@@ -41,7 +68,7 @@ public final class SimplePluginScanResult implements PluginScanResult {
 
         PluginScanResult other = (PluginScanResult) object;
 
-        return Objects.equals(other.getDescriptor(), this.descriptor)
+        return Objects.equals(other.getManifest(), this.manifest)
                 && Objects.equals(other.getPlugin(), this.plugin);
     }
 
@@ -49,7 +76,7 @@ public final class SimplePluginScanResult implements PluginScanResult {
     public String toString() {
         return new ToStringBuilder(this)
                 .attribute(this.plugin)
-                .attribute(this.descriptor)
+                .attribute(this.manifest)
                 .build();
     }
 
@@ -57,7 +84,7 @@ public final class SimplePluginScanResult implements PluginScanResult {
     public int hashCode() {
         int hash = 1;
 
-        hash = 31 * hash + this.descriptor.hashCode();
+        hash = 31 * hash + this.manifest.hashCode();
         hash = 31 * hash + this.plugin.hashCode();
 
         return hash;

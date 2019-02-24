@@ -49,7 +49,7 @@ public class StandardPluginManager implements PluginManager {
     private void registerScannedPlugins(Collection<PluginScanResult> scanResults) {
         //We can't load them now, since the dependencies aren't satisfied yet.
         scanResults.forEach(scanResult -> this.registry.register(
-                scanResult.getDescriptor(),
+                scanResult.getManifest(),
                 scanResult.getPlugin()));
     }
 
@@ -71,7 +71,7 @@ public class StandardPluginManager implements PluginManager {
         PluginScanResult scanResult = this.scanningStrategy.scanSingle(pluginFile);
         Plugin plugin = scanResult.getPlugin();
 
-        this.registry.register(scanResult.getDescriptor(), plugin);
+        this.registry.register(scanResult.getManifest(), plugin);
 
         plugin.load();
     }

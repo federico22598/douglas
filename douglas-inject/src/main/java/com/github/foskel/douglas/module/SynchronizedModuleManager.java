@@ -16,7 +16,7 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  * @since 4/9/2017
  */
 public class SynchronizedModuleManager implements ModuleManager {
-    private static final UnsatisfiedDependencyScanner<Class<? extends Module>> DEPENDENCY_SCANNER = new AnnotationDependencyScanner();
+    private static final UnsatisfiedDependencyScanner DEPENDENCY_SCANNER = new AnnotationDependencyScanner();
 
     private final Map<String, Module> modules;
     private final ModuleLocatorService locator;

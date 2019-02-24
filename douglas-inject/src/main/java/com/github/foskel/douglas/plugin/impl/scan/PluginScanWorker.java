@@ -17,6 +17,10 @@ import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Foskel
@@ -26,15 +30,20 @@ public final class PluginScanWorker {
     private final PluginManifestExtractor extractorService;
     private final ResourceHandler resourceHandler;
     private final ClassLoader classLoader;
+    private final List<PluginDescriptor> scannedDescriptors;
+    private final Path file;
 
     public PluginScanWorker(InstantiationStrategy<Plugin> instantiationStrategy,
                             PluginManifestExtractor extractorService,
                             ResourceHandler resourceHandler,
-                            ClassLoader classLoader) {
+                            ClassLoader classLoader, Path file,
+                            List<PluginDescriptor> scannedDescriptors) {
         this.instantiationStrategy = instantiationStrategy;
         this.extractorService = extractorService;
         this.resourceHandler = resourceHandler;
         this.classLoader = classLoader;
+        this.file = file;
+        this.scannedDescriptors = scannedDescriptors;
     }
 
     private static void registerDependencies(Plugin plugin, PluginManifest manifest) {
@@ -47,7 +56,25 @@ public final class PluginScanWorker {
         }
     }
 
-    public PluginScanResult scan(Path file) throws PluginScanFailedException {
+    private List<PluginDescriptor> checkPendingDependencies(PluginManifest manifest) {
+        Collection<PluginDescriptor> descriptors = manifest.getDependencyDescriptors();
+
+        if (descriptors.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<PluginDescriptor> result = new ArrayList<>();
+
+        for (PluginDescriptor descriptor : descriptors) {
+            if (!scannedDescriptors.contains(descriptor)) {
+                result.add(descriptor);
+            }
+        }
+
+        return result;
+    }
+
+    public PluginScanResult scan() throws PluginScanFailedException {
         PluginManifest manifest;
 
         try {
@@ -56,6 +83,16 @@ public final class PluginScanWorker {
             throw new PluginScanFailedException("Unable to scan '" + file + "':", e);
         }
 
+        List<PluginDescriptor> pendingDependencies = checkPendingDependencies(manifest);
+
+        if (!pendingDependencies.isEmpty()) {
+            return new SimplePluginScanResult(manifest, pendingDependencies, this);
+        }
+
+        return scan(manifest);
+    }
+
+    public PluginScanResult scan(PluginManifest manifest) throws PluginScanFailedException {
         String mainClassCanonical = manifest.getMainClass();
         ScanResult result = new FastClasspathScanner(mainClassCanonical)
                 .disableRecursiveScanning()
@@ -81,7 +118,7 @@ public final class PluginScanWorker {
         System.out.println("Dependency descriptors: " + manifest.getDependencyDescriptors());
         registerDependencies(plugin, manifest);
 
-        return new SimplePluginScanResult(manifest, plugin);
+        return new SimplePluginScanResult(manifest, plugin, this);
     }
 
     private static boolean isPlugin(Class<?> type, String requiredName) {

@@ -17,7 +17,7 @@ import java.util.Objects;
 /**
  * @author Foskel
  */
-public final class StandardPluginManager implements PluginManager {
+public class StandardPluginManager implements PluginManager {
     private final PluginScanningStrategy scanningStrategy;
     private final PluginRegistry registry;
     private final PluginLoader loader;
@@ -25,9 +25,9 @@ public final class StandardPluginManager implements PluginManager {
 
     @Inject
     StandardPluginManager(PluginScanningStrategy scanningStrategy,
-                          PluginRegistry registry,
-                          PluginLoader loader,
-                          Collection<PluginLoadingListener> loadingListeners) {
+                                 PluginRegistry registry,
+                                 PluginLoader loader,
+                                 Collection<PluginLoadingListener> loadingListeners) {
         this.scanningStrategy = scanningStrategy;
         this.registry = registry;
         this.loader = loader;
@@ -51,14 +51,12 @@ public final class StandardPluginManager implements PluginManager {
     private void registerScannedPlugins(Collection<PluginScanResult> scanResults) {
         //We can't load them now, since the dependencies aren't satisfied yet.
         scanResults.forEach(scanResult -> this.registry.register(
-                scanResult.getDescriptor(),
+                scanResult.getManifest(),
                 scanResult.getPlugin()));
     }
 
     private void loadAllPlugins() {
-        Collection<Plugin> plugins = this.registry
-                .findAllPlugins()
-                .values();
+        Collection<Plugin> plugins = this.registry.findAllPlugins().values();
 
         this.loadingListeners.forEach(processor -> processor.allLoaded(this.registry));
         this.loader.load(plugins);
@@ -75,7 +73,7 @@ public final class StandardPluginManager implements PluginManager {
         PluginScanResult scanResult = this.scanningStrategy.scanSingle(pluginFile);
         Plugin plugin = scanResult.getPlugin();
 
-        this.registry.register(scanResult.getDescriptor(), plugin);
+        this.registry.register(scanResult.getManifest(), plugin);
 
         plugin.load();
     }

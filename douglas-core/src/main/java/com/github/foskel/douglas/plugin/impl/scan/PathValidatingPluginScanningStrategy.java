@@ -2,11 +2,14 @@ package com.github.foskel.douglas.plugin.impl.scan;
 
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
+import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.resource.ResourceHandler;
 import com.github.foskel.douglas.plugin.scan.PluginScanFailedException;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
 import com.github.foskel.douglas.plugin.scan.PluginScanningStrategy;
+import com.github.foskel.douglas.plugin.scan.UnloadedPluginDependencyData;
 import com.github.foskel.douglas.plugin.scan.validation.PluginSourceValidator;
 
 import java.io.IOException;
@@ -14,10 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * @author Foskel
@@ -29,6 +29,8 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     private final PluginManifestExtractor extractorService;
     private final List<PluginSourceValidator<Path>> pathValidators;
     private final ResourceHandler resourceHandler;
+    private final Map<PluginDescriptor, Queue<UnloadedPluginDependencyData>> pendingDependentPlugins;
+    private final List<PluginDescriptor> scannedDescriptors;
 
     public PathValidatingPluginScanningStrategy(InstantiationStrategy<Plugin> instantiationStrategy,
                                                 PluginManifestExtractor extractorService,
@@ -38,6 +40,8 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
         this.extractorService = extractorService;
         this.pathValidators = pathValidators;
         this.resourceHandler = resourceHandler;
+        this.pendingDependentPlugins = new HashMap<>();
+        this.scannedDescriptors = new ArrayList<>();
     }
 
     private static boolean shouldLoadFile(Path file) {
@@ -50,13 +54,11 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     public Collection<PluginScanResult> scan(Path directory) throws PluginScanFailedException {
         this.validatePath(directory);
 
-        List<PluginScanResult> scanResults;
+        List<PluginScanResult> scanResults = new ArrayList<>();
+        Iterator<Path> pluginFiles;
 
         try {
-            scanResults = Files.walk(directory)
-                    .filter(PathValidatingPluginScanningStrategy::shouldLoadFile)
-                    .map(this::scanSingle)
-                    .collect(Collectors.toList());
+            pluginFiles = Files.walk(directory).iterator();
         } catch (IOException e) {
             String directoryFileName = directory.getFileName().toString();
 
@@ -65,7 +67,46 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                     "\":", e);
         }
 
+        while (pluginFiles.hasNext()) {
+            Path nextPluginFile = pluginFiles.next();
+
+            if (!shouldLoadFile(nextPluginFile)) {
+                continue;
+            }
+
+            PluginScanResult result = scanSingle(nextPluginFile);
+            List<PluginDescriptor> dependencyDescriptors = result.getPendingDependencyDescriptors();
+
+            loadDependents(result.getManifest(), scanResults);
+
+            if (!dependencyDescriptors.isEmpty()) {
+                for (PluginDescriptor descriptor : dependencyDescriptors) {
+                    Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.putIfAbsent(descriptor, new LinkedList<>());
+
+                    manifests.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker()));
+                }
+
+                continue;
+            }
+
+            scanResults.add(result);
+        }
+
         return Collections.unmodifiableList(scanResults);
+    }
+
+    private void loadDependents(PluginManifest source, List<PluginScanResult> allResults) {
+        Queue<UnloadedPluginDependencyData> dependenciesData = pendingDependentPlugins.get(source.getDescriptor());
+
+        if (dependenciesData == null) {
+            return;
+        }
+
+        while (!dependenciesData.isEmpty()) {
+            UnloadedPluginDependencyData dependencyData = dependenciesData.poll();
+
+            allResults.add(dependencyData.scanWorker.scan(dependencyData.manifest));
+        }
     }
 
     @Override
@@ -82,9 +123,10 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
         PluginScanWorker scanWorker = new PluginScanWorker(this.instantiationStrategy,
                 this.extractorService,
                 this.resourceHandler,
-                fileClassLoader);
+                fileClassLoader, file,
+                this.scannedDescriptors);
 
-        return scanWorker.scan(file);
+        return scanWorker.scan();
     }
 
     private void validatePath(Path path) {
