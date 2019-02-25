@@ -18,7 +18,7 @@ public enum StandardPluginLoader implements PluginLoader {
 
     private static final Comparator<Plugin> LOAD_PRIORITY_COMPARATOR = new PluginLoadingPriorityComparator(AnnotationPluginPriorityResolver.INSTANCE);
     private static final Comparator<Plugin> UNLOAD_PRIORITY_COMPARATOR = new PluginUnloadingPriorityComparator(AnnotationPluginPriorityResolver.INSTANCE);
-    
+
     @Override
     public void load(Collection<Plugin> plugins) {
         Plugin[] pluginsArr = plugins.toArray(new Plugin[plugins.size()]);
@@ -37,7 +37,7 @@ public enum StandardPluginLoader implements PluginLoader {
         Arrays.sort(pluginsArr, UNLOAD_PRIORITY_COMPARATOR);
 
         for (Plugin plugin : pluginsArr) {
-            plugin.load();
+            plugin.unload();
         }
     }
 

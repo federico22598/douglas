@@ -17,7 +17,7 @@ import java.util.List;
 public final class StandardPluginLoader implements PluginLoader {
     private final Comparator<Plugin> loadPriorityComparator;
     private final Comparator<Plugin> unloadPriorityComparator;
-    
+
     @Inject
     StandardPluginLoader(PluginPriorityResolver priorityResolver) {
         this.loadPriorityComparator = new PluginLoadingPriorityComparator(priorityResolver);
@@ -42,7 +42,7 @@ public final class StandardPluginLoader implements PluginLoader {
         Arrays.sort(pluginsArr, unloadPriorityComparator);
 
         for (Plugin plugin : pluginsArr) {
-            plugin.load();
+            plugin.unload();
         }
     }
 
