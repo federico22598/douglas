@@ -2,15 +2,12 @@ package com.github.foskel.douglas.util;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Objects;
 
 /**
  * @author Foskel
  */
 public final class ToStringBuilder {
     private static final String NULL_ATTRIBUTE = "null";
-    private static final String ATTRIBUTE_VALUE_SEPARATOR = "=";
-    private static final String ATTRIBUTE_SEPARATOR = ",";
 
     private final Object source;
     private final boolean useIdentityToString;
@@ -35,7 +32,7 @@ public final class ToStringBuilder {
     public ToStringBuilder attribute(Object attribute) {
         this.attributeBuilder.setLength(0);
         this.attributes.add(this.attributeBuilder.append(attribute.getClass().getSimpleName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR)
+                .append("=")
                 .append(this.toString(attribute))
                 .toString());
 
@@ -44,19 +41,18 @@ public final class ToStringBuilder {
 
     public String build() {
         StringBuilder resultBuilder = new StringBuilder();
-        String start = this.useIdentityToString
-                ? identityToString(this.source)
-                : this.source.getClass().getSimpleName();
+        String start = this.useIdentityToString ? identityToString(this.source) : this.source.getClass().getSimpleName();
 
         resultBuilder.append(start).append("{");
 
         while (!this.attributes.isEmpty()) {
+            String lastAttribute = this.attributes.getLast();
             String attribute = this.attributes.poll();
 
             resultBuilder.append(attribute);
 
-            if (!Objects.equals(attribute, this.attributes.peekLast())) {//peekLast will not throw NoSuchElementException if the last element is absent
-                resultBuilder.append(ATTRIBUTE_SEPARATOR);
+            if (!attribute.equals(lastAttribute)) {
+                resultBuilder.append(",");
             }
         }
 

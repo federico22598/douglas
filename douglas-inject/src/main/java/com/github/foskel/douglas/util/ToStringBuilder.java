@@ -46,11 +46,12 @@ public final class ToStringBuilder {
         resultBuilder.append(start).append("{");
 
         while (!this.attributes.isEmpty()) {
+            String lastAttribute = this.attributes.getLast();
             String attribute = this.attributes.poll();
 
             resultBuilder.append(attribute);
 
-            if (!attribute.equals(this.attributes.getLast())) {
+            if (!attribute.equals(lastAttribute)) {
                 resultBuilder.append(",");
             }
         }
