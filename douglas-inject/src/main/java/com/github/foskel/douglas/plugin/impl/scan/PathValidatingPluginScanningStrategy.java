@@ -35,9 +35,9 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
 
     @Inject
     PathValidatingPluginScanningStrategy(InstantiationStrategy<Plugin> instantiationStrategy,
-                                                PluginManifestExtractor extractorService,
-                                                List<PluginSourceValidator<Path>> pathValidators,
-                                                ResourceHandler resourceHandler) {
+                                         PluginManifestExtractor extractorService,
+                                         List<PluginSourceValidator<Path>> pathValidators,
+                                         ResourceHandler resourceHandler) {
         this.instantiationStrategy = instantiationStrategy;
         this.extractorService = extractorService;
         this.pathValidators = pathValidators;
