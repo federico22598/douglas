@@ -1,8 +1,7 @@
-package com.github.foskel.douglas.plugin.impl.load;
+package com.github.foskel.douglas.plugin.impl.dependency;
 
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.impl.dependency.PluginRemovingProcessor;
-import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
@@ -18,15 +17,8 @@ import java.util.Map;
 /**
  * @author Foskel
  */
-public final class DependencySatisfyingListener implements PluginLoadingListener {
-    private final List<DependencyProcessor> satisfyingProcessors;
-
-    public DependencySatisfyingListener(Collection<DependencyProcessor> satisfyingProcessors) {
-        this.satisfyingProcessors = new ArrayList<>(satisfyingProcessors);
-    }
-
-    @Override
-    public void allLoaded(PluginRegistry registry) {
+public final class PluginDependencySatisfier {
+    public void satisfy(PluginRegistry registry) {
         for (Map.Entry<PluginManifest, Plugin> entry : registry.findAllPlugins().entrySet()) {
             try {
                 this.satisfyPluginDependencies(entry.getKey(), entry.getValue(), registry);
@@ -39,21 +31,7 @@ public final class DependencySatisfyingListener implements PluginLoadingListener
     private void satisfyPluginDependencies(PluginManifest manifest, Plugin plugin, PluginRegistry registry) throws UnsatisfiedDependencyException {
         DependencySystem<PluginDescriptor, Plugin> dependencySystem = plugin.getDependencySystem();
 
-        dependencySystem.setCustomLocator((args) -> {
-            if (args.length > 1) {
-                Object groupId = args[0];
-                Object artifactId = args[1];
-
-                if (groupId.getClass() == String.class && artifactId.getClass() == String.class) {
-                    return registry.getLocator().find((String) groupId, (String) artifactId);
-                }
-            }
-
-            return null;
-        });
-
         dependencySystem.registerProcessor(new PluginRemovingProcessor(registry, manifest));
-        this.satisfyingProcessors.forEach(dependencySystem::registerProcessor);
         dependencySystem.satisfy(id -> registry.getLocator().find(id));
     }
 }

@@ -10,13 +10,13 @@ import com.github.foskel.douglas.module.SynchronizedModuleManager;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.impl.StandardPluginManager;
-import com.github.foskel.douglas.plugin.impl.load.DependencySatisfyingListener;
+import com.github.foskel.douglas.plugin.impl.dependency.PluginDependencySatisfier;
+import com.github.foskel.douglas.plugin.impl.load.AnnotationPriorityResolver;
 import com.github.foskel.douglas.plugin.impl.manifest.extract.ClassLoaderDataFileURLExtractor;
 import com.github.foskel.douglas.plugin.impl.manifest.extract.XMLPluginDescriptorParser;
 import com.github.foskel.douglas.plugin.impl.registry.StandardPluginRegistry;
 import com.github.foskel.douglas.plugin.impl.resource.AnnotationResourceHandler;
 import com.github.foskel.douglas.plugin.impl.scan.validation.PathPluginSourceValidator;
-import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginDescriptorExtractors;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractorBuilder;
@@ -24,7 +24,6 @@ import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.douglas.plugin.scan.PluginScanningStrategy;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,11 +53,7 @@ public final class Douglas {
     }
 
     public static PluginManager newPluginManager(InstantiationStrategy<Plugin> instantiationStrategy) {
-        List<PluginLoadingListener> loadingProcessors = Collections.singletonList(
-                new DependencySatisfyingListener(
-                        Collections.emptyList()));
-
-        return new StandardPluginManager(newPluginScanningStrategy(instantiationStrategy), newPluginRegistry(), loadingProcessors);
+        return new StandardPluginManager(newPluginScanningStrategy(instantiationStrategy), newPluginRegistry(), new AnnotationPriorityResolver());
     }
 
     public static PluginRegistry newPluginRegistry() {

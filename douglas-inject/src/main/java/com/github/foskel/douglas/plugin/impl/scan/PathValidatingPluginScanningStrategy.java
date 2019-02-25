@@ -96,7 +96,10 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     }
 
     private void loadDependents(PluginManifest source) {
-        for (UnloadedPluginDependencyData dependent : pendingDependentPlugins) {
+        Iterator<UnloadedPluginDependencyData> dependentIter = pendingDependentPlugins.iterator();
+
+        while (dependentIter.hasNext()) {
+            UnloadedPluginDependencyData dependent = dependentIter.next();
             Iterator<PluginDescriptor> descriptorIter = dependent.dependencyDescriptorIterator;
 
             while (descriptorIter.hasNext()) {
@@ -106,25 +109,16 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                     descriptorIter.remove();
 
                     if (!descriptorIter.hasNext()) {
-                        currentScanResults.add(dependent.scanWorker.scan(dependent.manifest));
+                        PluginScanResult result = dependent.scanWorker.scan(dependent.manifest);
+
+                        currentScanResults.add(result);
+                        dependentIter.remove();
                     }
 
                     break;
                 }
             }
         }
-
-        /*Queue<UnloadedPluginDependencyData> dependenciesData = pendingDependentPlugins.get(source.getDescriptor());
-
-        if (dependenciesData == null) {
-            return;
-        }
-
-        while (!dependenciesData.isEmpty()) {
-            UnloadedPluginDependencyData dependencyData = dependenciesData.poll();
-
-            currentScanResults.add(dependencyData.scanWorker.scan(dependencyData.manifest));
-        }*/
     }
 
     @Override

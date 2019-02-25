@@ -3,6 +3,7 @@ package com.github.foskel.douglas.plugin.impl.scan;
 import com.github.foskel.douglas.instantiation.InstantiationException;
 import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.impl.dependency.PluginDependencyLocator;
 import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
@@ -52,6 +53,7 @@ public final class PluginScanWorker {
         if (dependencySystem != null) {
             for (PluginDescriptor dependencyDescriptor : manifest.getDependencyDescriptors()) {
                 dependencySystem.getRegistry().registerDirectly(dependencyDescriptor, null);//TODO: Make registerUnsatisfiedDirectly(...)
+                dependencySystem.setCustomLocator(new PluginDependencyLocator(dependencySystem));
             }
         }
     }

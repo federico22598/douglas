@@ -6,13 +6,15 @@ import com.github.foskel.douglas.instantiation.ZeroArgumentInstantiationStrategy
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.impl.StandardPluginManager;
-import com.github.foskel.douglas.plugin.impl.load.DependencySatisfyingListener;
+import com.github.foskel.douglas.plugin.impl.dependency.PluginDependencySatisfier;
+import com.github.foskel.douglas.plugin.impl.load.AnnotationPriorityResolver;
 import com.github.foskel.douglas.plugin.impl.locate.SimplePluginLocatorProvider;
 import com.github.foskel.douglas.plugin.impl.registry.StandardPluginRegistry;
 import com.github.foskel.douglas.plugin.impl.resource.AnnotationResourceHandler;
 import com.github.foskel.douglas.plugin.impl.scan.PathValidatingPluginScanningStrategy;
 import com.github.foskel.douglas.plugin.impl.scan.validation.PathPluginSourceValidator;
 import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
+import com.github.foskel.douglas.plugin.load.PluginPriorityResolver;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorProvider;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
@@ -54,6 +56,11 @@ public final class DouglasPluginsModule {
     }
 
     @Provides
+    static PluginPriorityResolver providePluginPriorityResolver() {
+        return new AnnotationPriorityResolver();
+    }
+
+    @Provides
     static InstantiationStrategy<Plugin> providePluginInstantiationStrategy() {
         return new ZeroArgumentInstantiationStrategy<>();
     }
@@ -71,13 +78,6 @@ public final class DouglasPluginsModule {
     @Provides
     static ResourceHandler provideResourceHandler() {
         return new AnnotationResourceHandler();
-    }
-
-    @Provides
-    static Collection<PluginLoadingListener> provideLoadingListeners() {
-        return Collections.singletonList(
-                new DependencySatisfyingListener(
-                        Collections.emptyList()));
     }
 
     @Provides

@@ -6,13 +6,15 @@ import com.github.foskel.douglas.instantiation.InstantiationStrategy;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.impl.StandardPluginManager;
-import com.github.foskel.douglas.plugin.impl.load.DependencySatisfyingListener;
+import com.github.foskel.douglas.plugin.impl.dependency.PluginDependencySatisfier;
+import com.github.foskel.douglas.plugin.impl.load.AnnotationPriorityResolver;
 import com.github.foskel.douglas.plugin.impl.locate.SimplePluginLocatorProvider;
 import com.github.foskel.douglas.plugin.impl.registry.StandardPluginRegistry;
 import com.github.foskel.douglas.plugin.impl.resource.AnnotationResourceHandler;
 import com.github.foskel.douglas.plugin.impl.scan.PathValidatingPluginScanningStrategy;
 import com.github.foskel.douglas.plugin.impl.scan.validation.PathPluginSourceValidator;
 import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
+import com.github.foskel.douglas.plugin.load.PluginPriorityResolver;
 import com.github.foskel.douglas.plugin.locate.PluginLocatorProvider;
 import com.github.foskel.douglas.plugin.manifest.extract.PluginManifestExtractor;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
@@ -46,13 +48,6 @@ public final class DouglasPluginsModule extends AbstractModule {
         return Collections.singletonList(new PathPluginSourceValidator());
     }
 
-    @Provides
-    static Collection<PluginLoadingListener> provideLoadingListeners() {
-        return Collections.singletonList(
-                new DependencySatisfyingListener(
-                        Collections.emptyList()));
-    }
-
     @Override
     protected void configure() {
         this.bind(PluginManager.class)
@@ -68,5 +63,6 @@ public final class DouglasPluginsModule extends AbstractModule {
 
         this.bind(ResourceHandler.class).to(AnnotationResourceHandler.class);
         this.bind(PluginLocatorProvider.class).to(SimplePluginLocatorProvider.class);
+        this.bind(PluginPriorityResolver.class).to(AnnotationPriorityResolver.class);
     }
 }
