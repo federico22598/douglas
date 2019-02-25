@@ -5,7 +5,7 @@ import com.github.foskel.douglas.plugin.impl.load.priority.AnnotationPluginPrior
 import com.github.foskel.douglas.plugin.load.PluginLoader;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -18,29 +18,27 @@ public enum StandardPluginLoader implements PluginLoader {
 
     private static final Comparator<Plugin> LOAD_PRIORITY_COMPARATOR = new PluginLoadingPriorityComparator(AnnotationPluginPriorityResolver.INSTANCE);
     private static final Comparator<Plugin> UNLOAD_PRIORITY_COMPARATOR = new PluginUnloadingPriorityComparator(AnnotationPluginPriorityResolver.INSTANCE);
-    private List<Plugin> cachedPlugins;
-
+    
     @Override
     public void load(Collection<Plugin> plugins) {
-        if (cachedPlugins == null || !cachedPlugins.equals(plugins)) {
-            cachedPlugins = new ArrayList<>(plugins);
-        }
+        Plugin[] pluginsArr = plugins.toArray(new Plugin[plugins.size()]);
 
-        cachedPlugins.sort(LOAD_PRIORITY_COMPARATOR);
-        cachedPlugins.forEach(Plugin::load);
-        /*plugins.stream()
-                .sorted(LOAD_PRIORITY_COMPARATOR)
-                .forEach(Plugin::load);*/
+        Arrays.sort(pluginsArr, LOAD_PRIORITY_COMPARATOR);
+
+        for (Plugin plugin : pluginsArr) {
+            plugin.load();
+        }
     }
 
     @Override
     public void unload(Collection<Plugin> plugins) {
-        if (cachedPlugins == null || !cachedPlugins.equals(plugins)) {
-            cachedPlugins = new ArrayList<>(plugins);
-        }
+        Plugin[] pluginsArr = plugins.toArray(new Plugin[plugins.size()]);
 
-        cachedPlugins.sort(UNLOAD_PRIORITY_COMPARATOR);
-        cachedPlugins.forEach(Plugin::unload);
+        Arrays.sort(pluginsArr, UNLOAD_PRIORITY_COMPARATOR);
+
+        for (Plugin plugin : pluginsArr) {
+            plugin.load();
+        }
     }
 
     private static class PluginLoadingPriorityComparator implements Comparator<Plugin> {

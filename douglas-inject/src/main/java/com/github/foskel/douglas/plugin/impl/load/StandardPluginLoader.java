@@ -1,11 +1,12 @@
 package com.github.foskel.douglas.plugin.impl.load;
 
 import com.github.foskel.douglas.plugin.Plugin;
+import com.github.foskel.douglas.plugin.impl.load.priority.AnnotationPluginPriorityResolver;
 import com.github.foskel.douglas.plugin.load.PluginLoader;
 import com.github.foskel.douglas.plugin.load.priority.PluginPriorityResolver;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -16,8 +17,7 @@ import java.util.List;
 public final class StandardPluginLoader implements PluginLoader {
     private final Comparator<Plugin> loadPriorityComparator;
     private final Comparator<Plugin> unloadPriorityComparator;
-    private List<Plugin> cachedPlugins;
-
+    
     @Inject
     StandardPluginLoader(PluginPriorityResolver priorityResolver) {
         this.loadPriorityComparator = new PluginLoadingPriorityComparator(priorityResolver);
@@ -26,25 +26,24 @@ public final class StandardPluginLoader implements PluginLoader {
 
     @Override
     public void load(Collection<Plugin> plugins) {
-        if (cachedPlugins == null || !cachedPlugins.equals(plugins)) {
-            cachedPlugins = new ArrayList<>(plugins);
-        }
+        Plugin[] pluginsArr = plugins.toArray(new Plugin[plugins.size()]);
 
-        cachedPlugins.sort(loadPriorityComparator);
-        cachedPlugins.forEach(Plugin::load);
-        /*plugins.stream()
-                .sorted(LOAD_PRIORITY_COMPARATOR)
-                .forEach(Plugin::load);*/
+        Arrays.sort(pluginsArr, loadPriorityComparator);
+
+        for (Plugin plugin : pluginsArr) {
+            plugin.load();
+        }
     }
 
     @Override
     public void unload(Collection<Plugin> plugins) {
-        if (cachedPlugins == null || !cachedPlugins.equals(plugins)) {
-            cachedPlugins = new ArrayList<>(plugins);
-        }
+        Plugin[] pluginsArr = plugins.toArray(new Plugin[plugins.size()]);
 
-        cachedPlugins.sort(unloadPriorityComparator);
-        cachedPlugins.forEach(Plugin::unload);
+        Arrays.sort(pluginsArr, unloadPriorityComparator);
+
+        for (Plugin plugin : pluginsArr) {
+            plugin.load();
+        }
     }
 
     private static class PluginLoadingPriorityComparator implements Comparator<Plugin> {
