@@ -53,7 +53,7 @@ public final class SimplePluginScanResult implements PluginScanResult {
 
     @Override
     public PluginScanWorker getScanWorker() {
-        return null;
+        return this.scanWorker;
     }
 
     @Override
