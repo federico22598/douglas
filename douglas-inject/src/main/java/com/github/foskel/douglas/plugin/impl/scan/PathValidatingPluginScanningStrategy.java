@@ -12,6 +12,7 @@ import com.github.foskel.douglas.plugin.scan.PluginScanningStrategy;
 import com.github.foskel.douglas.plugin.scan.UnloadedPluginDependencyData;
 import com.github.foskel.douglas.plugin.scan.validation.PluginSourceValidator;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +33,8 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     private final Map<PluginDescriptor, Queue<UnloadedPluginDependencyData>> pendingDependentPlugins;
     private final List<PluginScanResult> currentScanResults;
 
-    public PathValidatingPluginScanningStrategy(InstantiationStrategy<Plugin> instantiationStrategy,
+    @Inject
+    PathValidatingPluginScanningStrategy(InstantiationStrategy<Plugin> instantiationStrategy,
                                                 PluginManifestExtractor extractorService,
                                                 List<PluginSourceValidator<Path>> pathValidators,
                                                 ResourceHandler resourceHandler) {
