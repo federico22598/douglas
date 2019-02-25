@@ -30,7 +30,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     private final List<PluginSourceValidator<Path>> pathValidators;
     private final ResourceHandler resourceHandler;
     private final Map<PluginDescriptor, Queue<UnloadedPluginDependencyData>> pendingDependentPlugins;
-    private final List<PluginDescriptor> scannedDescriptors;
+    private final List<PluginScanResult> currentScanResults;
 
     public PathValidatingPluginScanningStrategy(InstantiationStrategy<Plugin> instantiationStrategy,
                                                 PluginManifestExtractor extractorService,
@@ -41,7 +41,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
         this.pathValidators = pathValidators;
         this.resourceHandler = resourceHandler;
         this.pendingDependentPlugins = new HashMap<>();
-        this.scannedDescriptors = new ArrayList<>();
+        this.currentScanResults = new ArrayList<>();
     }
 
     private static boolean shouldLoadFile(Path file) {
@@ -52,9 +52,10 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
 
     @Override
     public Collection<PluginScanResult> scan(Path directory) throws PluginScanFailedException {
+        currentScanResults.clear();
+
         this.validatePath(directory);
 
-        List<PluginScanResult> scanResults = new ArrayList<>();
         Iterator<Path> pluginFiles;
 
         try {
@@ -77,15 +78,12 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
             PluginScanResult result = scanSingle(nextPluginFile);
             List<PluginDescriptor> dependencyDescriptors = result.getPendingDependencyDescriptors();
 
-            loadDependents(result.getManifest(), scanResults);
+            loadDependents(result.getManifest(), currentScanResults);
 
             if (!dependencyDescriptors.isEmpty()) {
                 for (PluginDescriptor descriptor : dependencyDescriptors) {
-                    Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.get(descriptor);
-
-                    if (manifests == null) {
-                        manifests = new LinkedList<>();
-                    }
+                    Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.computeIfAbsent(descriptor,
+                            __ -> new LinkedList<>());
 
                     manifests.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker()));
                 }
@@ -93,10 +91,10 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                 continue;
             }
 
-            scanResults.add(result);
+            currentScanResults.add(result);
         }
 
-        return Collections.unmodifiableList(scanResults);
+        return Collections.unmodifiableList(currentScanResults);
     }
 
     private void loadDependents(PluginManifest source, List<PluginScanResult> allResults) {
@@ -128,7 +126,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                 this.extractorService,
                 this.resourceHandler,
                 fileClassLoader, file,
-                this.scannedDescriptors);
+                this.currentScanResults);
 
         return scanWorker.scan();
     }

@@ -30,20 +30,20 @@ public final class PluginScanWorker {
     private final PluginManifestExtractor extractorService;
     private final ResourceHandler resourceHandler;
     private final ClassLoader classLoader;
-    private final List<PluginDescriptor> scannedDescriptors;
+    private final List<PluginScanResult> allScanResults;
     private final Path file;
 
     public PluginScanWorker(InstantiationStrategy<Plugin> instantiationStrategy,
                             PluginManifestExtractor extractorService,
                             ResourceHandler resourceHandler,
                             ClassLoader classLoader, Path file,
-                            List<PluginDescriptor> scannedDescriptors) {
+                            List<PluginScanResult> allScanResults) {
         this.instantiationStrategy = instantiationStrategy;
         this.extractorService = extractorService;
         this.resourceHandler = resourceHandler;
         this.classLoader = classLoader;
         this.file = file;
-        this.scannedDescriptors = scannedDescriptors;
+        this.allScanResults = allScanResults;
     }
 
     private static void registerDependencies(Plugin plugin, PluginManifest manifest) {
@@ -65,9 +65,13 @@ public final class PluginScanWorker {
 
         List<PluginDescriptor> result = new ArrayList<>();
 
-        for (PluginDescriptor descriptor : descriptors) {
-            if (!scannedDescriptors.contains(descriptor)) {
-                result.add(descriptor);
+        for (PluginDescriptor dependencyDescriptor : descriptors) {
+            for (PluginScanResult lookupScanResult : allScanResults) {
+                PluginDescriptor lookupDescriptor = lookupScanResult.getManifest().getDescriptor();
+
+                if (lookupDescriptor.equals(dependencyDescriptor)) {
+                    result.add(dependencyDescriptor);
+                }
             }
         }
 
