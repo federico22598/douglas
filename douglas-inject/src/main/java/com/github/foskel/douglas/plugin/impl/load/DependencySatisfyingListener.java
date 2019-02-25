@@ -18,10 +18,10 @@ import java.util.Map;
 /**
  * @author Foskel
  */
-public final class DependencySatisfyingPluginLoadingListener implements PluginLoadingListener {
+public final class DependencySatisfyingListener implements PluginLoadingListener {
     private final List<DependencyProcessor> satisfyingProcessors;
 
-    public DependencySatisfyingPluginLoadingListener(Collection<DependencyProcessor> satisfyingProcessors) {
+    public DependencySatisfyingListener(Collection<DependencyProcessor> satisfyingProcessors) {
         this.satisfyingProcessors = new ArrayList<>(satisfyingProcessors);
     }
 
@@ -38,6 +38,19 @@ public final class DependencySatisfyingPluginLoadingListener implements PluginLo
 
     private void satisfyPluginDependencies(PluginManifest manifest, Plugin plugin, PluginRegistry registry) throws UnsatisfiedDependencyException {
         DependencySystem<PluginDescriptor, Plugin> dependencySystem = plugin.getDependencySystem();
+
+        dependencySystem.setCustomLocator((args) -> {
+            if (args.length > 1) {
+                Object groupId = args[0];
+                Object artifactId = args[1];
+
+                if (groupId.getClass() == String.class && artifactId.getClass() == String.class) {
+                    return registry.getLocator().find((String) groupId, (String) artifactId);
+                }
+            }
+
+            return null;
+        });
 
         dependencySystem.registerProcessor(new PluginRemovingProcessor(registry, manifest));
         this.satisfyingProcessors.forEach(dependencySystem::registerProcessor);

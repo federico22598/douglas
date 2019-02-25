@@ -10,8 +10,7 @@ import com.github.foskel.douglas.module.SynchronizedModuleManager;
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
 import com.github.foskel.douglas.plugin.impl.StandardPluginManager;
-import com.github.foskel.douglas.plugin.impl.load.DependencySatisfyingPluginLoadingListener;
-import com.github.foskel.douglas.plugin.impl.load.StandardPluginLoader;
+import com.github.foskel.douglas.plugin.impl.load.DependencySatisfyingListener;
 import com.github.foskel.douglas.plugin.impl.manifest.extract.ClassLoaderDataFileURLExtractor;
 import com.github.foskel.douglas.plugin.impl.manifest.extract.XMLPluginDescriptorParser;
 import com.github.foskel.douglas.plugin.impl.registry.StandardPluginRegistry;
@@ -56,13 +55,10 @@ public final class Douglas {
 
     public static PluginManager newPluginManager(InstantiationStrategy<Plugin> instantiationStrategy) {
         List<PluginLoadingListener> loadingProcessors = Collections.singletonList(
-                new DependencySatisfyingPluginLoadingListener(
+                new DependencySatisfyingListener(
                         Collections.emptyList()));
 
-        return new StandardPluginManager(newPluginScanningStrategy(instantiationStrategy),
-                newPluginRegistry(),
-                StandardPluginLoader.INSTANCE,
-                loadingProcessors);
+        return new StandardPluginManager(newPluginScanningStrategy(instantiationStrategy), newPluginRegistry(), loadingProcessors);
     }
 
     public static PluginRegistry newPluginRegistry() {

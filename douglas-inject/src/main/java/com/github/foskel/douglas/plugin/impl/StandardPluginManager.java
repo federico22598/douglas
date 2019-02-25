@@ -2,7 +2,6 @@ package com.github.foskel.douglas.plugin.impl;
 
 import com.github.foskel.douglas.plugin.Plugin;
 import com.github.foskel.douglas.plugin.PluginManager;
-import com.github.foskel.douglas.plugin.load.PluginLoader;
 import com.github.foskel.douglas.plugin.load.PluginLoadingListener;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 import com.github.foskel.douglas.plugin.scan.PluginScanResult;
@@ -20,17 +19,14 @@ import java.util.Objects;
 public class StandardPluginManager implements PluginManager {
     private final PluginScanningStrategy scanningStrategy;
     private final PluginRegistry registry;
-    private final PluginLoader loader;
     private final Collection<PluginLoadingListener> loadingListeners;
 
     @Inject
     StandardPluginManager(PluginScanningStrategy scanningStrategy,
                           PluginRegistry registry,
-                          PluginLoader loader,
                           Collection<PluginLoadingListener> loadingListeners) {
         this.scanningStrategy = scanningStrategy;
         this.registry = registry;
-        this.loader = loader;
         this.loadingListeners = loadingListeners;
     }
 
@@ -44,22 +40,14 @@ public class StandardPluginManager implements PluginManager {
 
         Collection<PluginScanResult> scanResults = this.scanningStrategy.scan(pluginsDirectory);
 
-        this.registerScannedPlugins(scanResults);
-        this.loadAllPlugins();
-    }
+        for (PluginScanResult scanResult : scanResults) {
+            Plugin plugin = scanResult.getPlugin();
 
-    private void registerScannedPlugins(Collection<PluginScanResult> scanResults) {
-        //We can't load them now, since the dependencies aren't satisfied yet.
-        scanResults.forEach(scanResult -> this.registry.register(
-                scanResult.getManifest(),
-                scanResult.getPlugin()));
-    }
+            this.registry.register(scanResult.getManifest(), plugin);
+            plugin.load();
+        }
 
-    private void loadAllPlugins() {
-        Collection<Plugin> plugins = this.registry.findAllPlugins().values();
-
-        this.loadingListeners.forEach(processor -> processor.allLoaded(this.registry));
-        this.loader.load(plugins);
+        this.loadingListeners.forEach(listener -> listener.allLoaded(this.registry));
     }
 
     @Override
@@ -74,22 +62,16 @@ public class StandardPluginManager implements PluginManager {
         Plugin plugin = scanResult.getPlugin();
 
         this.registry.register(scanResult.getManifest(), plugin);
-
         plugin.load();
     }
 
     @Override
     public void unload() {
-        this.unloadAllPlugins();
+        for (Plugin plugin : this.registry.findAllPlugins().values()) {
+            plugin.unload();
+        }
+
         this.registry.clear();
-    }
-
-    private void unloadAllPlugins() {
-        Collection<Plugin> plugins = this.registry
-                .findAllPlugins()
-                .values();
-
-        this.loader.unload(plugins);
     }
 
     @Override
