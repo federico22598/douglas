@@ -6,8 +6,6 @@ import com.github.foskel.douglas.plugin.manifest.PluginDescriptor;
 import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 
 /**
  * @author Foskel

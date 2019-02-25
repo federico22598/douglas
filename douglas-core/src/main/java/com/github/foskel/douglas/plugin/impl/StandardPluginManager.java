@@ -39,7 +39,7 @@ public class StandardPluginManager implements PluginManager {
         if (Files.notExists(pluginsDirectory) || !Files.isDirectory(pluginsDirectory)) {
             return;
         }
-        
+
         Collection<PluginScanResult> scanResults = this.scanningStrategy.scan(pluginsDirectory);
 
         this.registerScannedPlugins(scanResults);

@@ -81,7 +81,11 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
 
             if (!dependencyDescriptors.isEmpty()) {
                 for (PluginDescriptor descriptor : dependencyDescriptors) {
-                    Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.putIfAbsent(descriptor, new LinkedList<>());
+                    Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.get(descriptor);
+
+                    if (manifests == null) {
+                        manifests = new LinkedList<>();
+                    }
 
                     manifests.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker()));
                 }

@@ -7,7 +7,6 @@ import com.github.foskel.douglas.plugin.manifest.PluginManifest;
 import com.github.foskel.douglas.plugin.registry.PluginRegistry;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
