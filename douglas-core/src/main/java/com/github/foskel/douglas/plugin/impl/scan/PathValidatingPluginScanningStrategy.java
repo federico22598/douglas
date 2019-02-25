@@ -90,15 +90,15 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                     Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.computeIfAbsent(descriptor,
                             __ -> new LinkedList<>());
 
-                    System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifests for dependency descriptor: " + manifests);
                     manifests.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker()));
+                    System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifests for dependency descriptor: " + manifests);
                 }
 
                 continue;
             }
 
             currentScanResults.add(result);
-            
+
             System.out.println("[" + nextPluginFile.getFileName().toString() + "] Added to results list.");
         }
 

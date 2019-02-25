@@ -77,10 +77,15 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                 continue;
             }
 
+            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Starting scan...");
+
             PluginScanResult result = scanSingle(nextPluginFile);
             List<PluginDescriptor> dependencyDescriptors = result.getPendingDependencyDescriptors();
 
-            loadDependents(result.getManifest(), currentScanResults);
+            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifest: " + result.getManifest());
+            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Dependency descriptors: " + dependencyDescriptors);
+
+            loadDependents(result.getManifest());
 
             if (!dependencyDescriptors.isEmpty()) {
                 for (PluginDescriptor descriptor : dependencyDescriptors) {
@@ -88,18 +93,21 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                             __ -> new LinkedList<>());
 
                     manifests.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker()));
+                    System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifests for dependency descriptor: " + manifests);
                 }
 
                 continue;
             }
 
             currentScanResults.add(result);
+
+            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Added to results list.");
         }
 
         return Collections.unmodifiableList(currentScanResults);
     }
 
-    private void loadDependents(PluginManifest source, List<PluginScanResult> allResults) {
+    private void loadDependents(PluginManifest source) {
         Queue<UnloadedPluginDependencyData> dependenciesData = pendingDependentPlugins.get(source.getDescriptor());
 
         if (dependenciesData == null) {
@@ -109,7 +117,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
         while (!dependenciesData.isEmpty()) {
             UnloadedPluginDependencyData dependencyData = dependenciesData.poll();
 
-            allResults.add(dependencyData.scanWorker.scan(dependencyData.manifest));
+            currentScanResults.add(dependencyData.scanWorker.scan(dependencyData.manifest));
         }
     }
 
