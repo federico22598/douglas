@@ -70,6 +70,8 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                     "\":", e);
         }
 
+        URLPluginClassLoader classLoader = new URLPluginClassLoader(PathValidatingPluginScanningStrategy.class.getClassLoader());
+
         while (pluginFiles.hasNext()) {
             Path nextPluginFile = pluginFiles.next();
 
@@ -79,7 +81,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
 
             System.out.println("[" + nextPluginFile.getFileName().toString() + "] Starting scan...");
 
-            PluginScanResult result = scanSingle(nextPluginFile);
+            PluginScanResult result = scanSingle(nextPluginFile, classLoader);
             List<PluginDescriptor> dependencyDescriptors = result.getPendingDependencyDescriptors();
 
             System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifest: " + result.getManifest());
@@ -124,10 +126,13 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     @Override
     public PluginScanResult scanSingle(Path file) {
         ClassLoader parentClassLoader = PathValidatingPluginScanningStrategy.class.getClassLoader();
-        ClassLoader fileClassLoader;
 
+        return scanSingle(file, new URLPluginClassLoader(parentClassLoader));
+    }
+
+    private PluginScanResult scanSingle(Path file, URLPluginClassLoader classLoader) {
         try {
-            fileClassLoader = new URLPluginClassLoader(new URL[]{file.toUri().toURL()}, parentClassLoader);
+            classLoader.addURL(file.toUri().toURL());
         } catch (MalformedURLException e) {
             throw new PluginScanFailedException("Unable to scan plugin JAR file " + file + ":", e);
         }
@@ -135,7 +140,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
         PluginScanWorker scanWorker = new PluginScanWorker(this.instantiationStrategy,
                 this.extractorService,
                 this.resourceHandler,
-                fileClassLoader, file,
+                classLoader, file,
                 this.currentScanResults);
 
         return scanWorker.scan();
