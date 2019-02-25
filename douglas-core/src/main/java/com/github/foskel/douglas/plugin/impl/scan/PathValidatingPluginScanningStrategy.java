@@ -28,7 +28,8 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
     private final PluginManifestExtractor extractorService;
     private final List<PluginSourceValidator<Path>> pathValidators;
     private final ResourceHandler resourceHandler;
-    private final Map<PluginDescriptor, Queue<UnloadedPluginDependencyData>> pendingDependentPlugins;
+    //private final Map<PluginDescriptor, Queue<UnloadedPluginDependencyData>> pendingDependentPlugins;
+    private final List<UnloadedPluginDependencyData> pendingDependentPlugins;
     private final List<PluginScanResult> currentScanResults;
 
     public PathValidatingPluginScanningStrategy(InstantiationStrategy<Plugin> instantiationStrategy,
@@ -39,7 +40,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
         this.extractorService = extractorService;
         this.pathValidators = pathValidators;
         this.resourceHandler = resourceHandler;
-        this.pendingDependentPlugins = new HashMap<>();
+        this.pendingDependentPlugins = new ArrayList<>();
         this.currentScanResults = new ArrayList<>();
     }
 
@@ -76,38 +77,42 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
                 continue;
             }
 
-            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Starting scan...");
-
             PluginScanResult result = scanSingle(nextPluginFile, classLoader);
             List<PluginDescriptor> dependencyDescriptors = result.getPendingDependencyDescriptors();
-
-            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifest: " + result.getManifest());
-            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Dependency descriptors: " + dependencyDescriptors);
 
             loadDependents(result.getManifest());
 
             if (!dependencyDescriptors.isEmpty()) {
-                for (PluginDescriptor descriptor : dependencyDescriptors) {
-                    Queue<UnloadedPluginDependencyData> manifests = pendingDependentPlugins.computeIfAbsent(descriptor,
-                            __ -> new LinkedList<>());
-
-                    manifests.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker()));
-                    System.out.println("[" + nextPluginFile.getFileName().toString() + "] Manifests for dependency descriptor: " + manifests);
-                }
-
+                pendingDependentPlugins.add(new UnloadedPluginDependencyData(result.getManifest(), result.getScanWorker(), dependencyDescriptors.iterator()));
                 continue;
             }
 
             currentScanResults.add(result);
-
-            System.out.println("[" + nextPluginFile.getFileName().toString() + "] Added to results list.");
         }
 
         return Collections.unmodifiableList(currentScanResults);
     }
 
     private void loadDependents(PluginManifest source) {
-        Queue<UnloadedPluginDependencyData> dependenciesData = pendingDependentPlugins.get(source.getDescriptor());
+        for (UnloadedPluginDependencyData dependent : pendingDependentPlugins) {
+            Iterator<PluginDescriptor> descriptorIter = dependent.dependencyDescriptorIterator;
+
+            while (descriptorIter.hasNext()) {
+                PluginDescriptor nextDescriptor = descriptorIter.next();
+
+                if (nextDescriptor.equals(source.getDescriptor())) {
+                    descriptorIter.remove();
+
+                    if (!descriptorIter.hasNext()) {
+                        currentScanResults.add(dependent.scanWorker.scan(dependent.manifest));
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        /*Queue<UnloadedPluginDependencyData> dependenciesData = pendingDependentPlugins.get(source.getDescriptor());
 
         if (dependenciesData == null) {
             return;
@@ -117,7 +122,7 @@ public class PathValidatingPluginScanningStrategy implements PluginScanningStrat
             UnloadedPluginDependencyData dependencyData = dependenciesData.poll();
 
             currentScanResults.add(dependencyData.scanWorker.scan(dependencyData.manifest));
-        }
+        }*/
     }
 
     @Override
