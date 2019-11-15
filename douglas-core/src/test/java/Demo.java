@@ -1,5 +1,5 @@
-import com.github.foskel.douglas.Douglas;
-import com.github.foskel.douglas.plugin.PluginManager;
+import com.github.idkp.douglas.Douglas;
+import com.github.idkp.douglas.plugin.PluginManager;
 
 import java.nio.file.Paths;
 

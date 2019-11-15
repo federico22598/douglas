@@ -1,5 +1,5 @@
 subprojects {
-    group 'com.github.foskel.douglas'
+    group 'com.github.idkp.douglas'
     version '0.2.2-RELEASE'
 
     apply plugin: 'java'
@@ -20,6 +20,6 @@ subprojects {
 
     dependencies {
         compile 'io.github.lukehutch:fast-classpath-scanner:2.21'
-        compile 'com.github.foskel:haptor:-SNAPSHOT'
+        compile 'com.github.idkp:haptor:-SNAPSHOT'
     }
 }
